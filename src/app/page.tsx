@@ -2,6 +2,7 @@
 import Bouton from "@/components/Bouton";
 import Encart from "@/components/Encart";
 import {GoArrowUpRight} from "react-icons/go";
+import Carrousel from "@/components/Carrousel";
 
 
 
@@ -15,7 +16,7 @@ export default function Home() {
     </Encart>
     <Encart customWidth={"w-[60%]"} titre={"Besoin d’un guide ?"} corps={"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}/>
 </div>
-
+          <Carrousel />
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <p>Pimer & Yoyo all rights reserved - 2025</p>
