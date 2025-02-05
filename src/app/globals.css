@@ -24,3 +24,8 @@ body {
 p, h1, h2, h3, button {
   color: var(--text);
 }
+
+h2 {
+  font-size: 48px;
+}
+

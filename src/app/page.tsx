@@ -1,33 +1,21 @@
-import Image from "next/image";
+
 import Bouton from "@/components/Bouton";
 import Encart from "@/components/Encart";
 import {GoArrowUpRight} from "react-icons/go";
 
+
+
 export default function Home() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li>Save and see your changes instantly.</li>
-        </ol>
-<Encart titre={"On a le meilleur vin."} corps={"Pour en avoir le coeur net, la suite c’est ici:"}>
-  <Bouton text={"Au shop"} childrenIcon={<GoArrowUpRight color="#1E4147" />} />
-</Encart>
+    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen  p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+      <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start ">
+<div className="flex flex-row max-w-[804px]">
+    <Encart titre={"On a le meilleur vin."} corps={"Pour en avoir le coeur net, la suite c’est ici:"} customWidth={"w-[250px]"}>
+        <Bouton text={"Au shop"} childrenIcon={<GoArrowUpRight color="#1E4147" />} />
+    </Encart>
+    <Encart customWidth={"w-[60%]"} titre={"Besoin d’un guide ?"} corps={"Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat."}/>
+</div>
+
       </main>
       <footer className="row-start-3 flex gap-6 flex-wrap items-center justify-center">
         <p>Pimer & Yoyo all rights reserved - 2025</p>
