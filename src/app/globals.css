@@ -29,3 +29,7 @@ h2 {
   font-size: 48px;
 }
 
+a {
+  color: var(--foreground);
+}
+

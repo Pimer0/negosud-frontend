@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { montserrat } from './fonts'
+import HeaderClient from "@/components/HeaderClient";
 
 
 export const metadata: Metadata = {
@@ -18,6 +19,7 @@ export default function RootLayout({
       <body
         className={montserrat.className}
       >
+      <HeaderClient pathname={""} />
         {children}
       </body>
     </html>
