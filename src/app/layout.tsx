@@ -19,11 +19,9 @@ export default function RootLayout({
       <body
         className={montserrat.className}
       >
-      <HeaderClient pathname={""} />
+      <HeaderClient />
         {children}
       </body>
     </html>
   );
 }
-
-export { montserrat };
