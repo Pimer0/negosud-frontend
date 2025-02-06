@@ -4,7 +4,8 @@ import {liensHeaderClient} from "@/Utils/liensHeaderClient";
 import {FiShoppingCart} from "react-icons/fi";
 import {FaRegUser} from "react-icons/fa";
 
-                const HeaderClient: React.FC = ({style =  "flex row text-[#1E4147] active:underline active:underline-offset-4 focus:underline focus:underline-offset-4 hover:underline hover:underline-offset-4"}) => {
+                // @ts-expect-error style est passé pour ne pas se répeter
+const HeaderClient: React.FC = ({style =  "flex row text-[#1E4147] active:underline active:underline-offset-4 focus:underline focus:underline-offset-4 hover:underline hover:underline-offset-4"}) => {
 
 
 return (
