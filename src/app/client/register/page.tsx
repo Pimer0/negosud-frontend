@@ -3,7 +3,9 @@ import Bouton from "@/components/Bouton";
 import EncartForm from "@/components/EncartForm";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUser } from "@/services/api/ClientAuth"; // Assure-toi d'importer ton service
+import { createUser } from "@/services/api/ClientAuth";
+import { RegisterFormSchema, FormState } from "@/lib/zodDefinitions";
+
 
 export default function Register() {
     const router = useRouter();
@@ -14,7 +16,7 @@ export default function Register() {
         prenom: '',
         tel: ''
     });
-    const [error, setError] = useState<string | null>(null);
+    const [errors, setErrors] = useState<FormState>({});
     const [success, setSuccess] = useState<boolean>(false);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -27,8 +29,26 @@ export default function Register() {
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
-        setError(null);
+        setErrors({});
         setSuccess(false);
+
+        // Validation des champs avec Zod
+        const validatedFields = RegisterFormSchema.safeParse({
+            email: formData.email,
+            mdp: formData.motDePasse,
+            nom: formData.nom,
+            prenom: formData.prenom,
+            tel: formData.tel
+        });
+
+        // Si la validation échoue, affiche les erreurs
+        if (!validatedFields.success) {
+            setErrors({
+                errors: validatedFields.error.flatten().fieldErrors,
+                message: 'Veuillez corriger les erreurs ci-dessous.'
+            });
+            return;
+        }
 
         try {
             // Appel du service pour créer un utilisateur
@@ -44,7 +64,9 @@ export default function Register() {
             // Rediriger l'utilisateur après une inscription réussie
             router.push('/login');
         } catch (error) {
-            setError('Une erreur est survenue lors de l\'inscription.');
+            setErrors({
+                message: 'Une erreur est survenue lors de l\'inscription.'
+            });
             console.error(error);
         }
     };
@@ -53,7 +75,7 @@ export default function Register() {
         <EncartForm titre={"Enregistrez-vous"} customWidth={"w-[614px]"}>
             <form onSubmit={onSubmit}>
                 <div className={"flex flex-col gap-4"}>
-
+                    <div>
                         <label htmlFor="email">Email</label>
                         <input
                             type="email"
@@ -63,9 +85,12 @@ export default function Register() {
                             onChange={handleChange}
                             required
                         />
+                        {errors?.errors?.email && (
+                            <p className="text-red-500 text-sm">{errors.errors.email[0]}</p>
+                        )}
+                    </div>
 
-
-
+                    <div>
                         <label htmlFor="mdp">Mot de passe</label>
                         <input
                             type="password"
@@ -75,9 +100,12 @@ export default function Register() {
                             onChange={handleChange}
                             required
                         />
+                        {errors?.errors?.mdp && (
+                            <p className="text-red-500 text-sm">{errors.errors.mdp[0]}</p>
+                        )}
+                    </div>
 
-
-
+                    <div>
                         <label htmlFor="nom">Nom</label>
                         <input
                             type="text"
@@ -87,9 +115,12 @@ export default function Register() {
                             onChange={handleChange}
                             required
                         />
+                        {errors?.errors?.nom && (
+                            <p className="text-red-500 text-sm">{errors.errors.nom[0]}</p>
+                        )}
+                    </div>
 
-
-
+                    <div>
                         <label htmlFor="prenom">Prénom</label>
                         <input
                             type="text"
@@ -99,9 +130,12 @@ export default function Register() {
                             onChange={handleChange}
                             required
                         />
+                        {errors?.errors?.prenom && (
+                            <p className="text-red-500 text-sm">{errors.errors.prenom[0]}</p>
+                        )}
+                    </div>
 
-
-
+                    <div>
                         <label htmlFor="tel">Téléphone</label>
                         <input
                             type="tel"
@@ -111,10 +145,11 @@ export default function Register() {
                             onChange={handleChange}
                             required
                         />
-
+                        {/* Ajoute une validation pour le téléphone si nécessaire */}
+                    </div>
                 </div>
 
-                {error && <p className="text-red-500 mt-4">{error}</p>}
+                {errors?.message && <p className="text-red-500 mt-4">{errors.message}</p>}
                 {success && <p className="text-green-500 mt-4">Inscription réussie !</p>}
 
                 <div className={"flex flex-row-reverse gap-3 mt-6"}>
