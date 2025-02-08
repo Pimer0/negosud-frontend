@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { montserrat } from './fonts'
 import HeaderClient from "@/components/HeaderClient";
+import Footer from "@/components/footer";
 
 
 export const metadata: Metadata = {
@@ -21,6 +22,7 @@ export default function RootLayout({
       >
       <HeaderClient />
         {children}
+      <Footer/>
       </body>
     </html>
   );

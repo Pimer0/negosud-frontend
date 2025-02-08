@@ -7,7 +7,7 @@ const EncartForm: React.FC<EncartFormProps>= ({children, titre, customWidth}) =>
             <main className="flex flex-col gap-8 row-start-2 items-center sm:items-start ">
         <div >
             <h1 className={`font-bold ${barlowCondensed.className} leading-none mb-3`}>{titre}</h1>
-            <div className={`bg-white h-96 rounded-lg p-4 ${customWidth} flex flex-wrap content-center items-center justify-center`}>
+            <div className={`bg-white h-fit rounded-lg p-4 ${customWidth} flex flex-wrap content-center items-center justify-center`}>
                 {children}
             </div>
         </div>
