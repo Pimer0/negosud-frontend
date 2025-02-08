@@ -22,8 +22,8 @@ import axiosInstance from "@/lib/axiosConfig";
 export const validateCode = async ({ code, email }: { code: string; email: string }) => {
                 try {
                     const reponse = await axiosInstance.post('/api/Client/validate-email', {
-                        code: '',
-                        email: ''
+                        code: code,
+                        email: email
                     });
                     return reponse.data;
                 } catch (error) {
