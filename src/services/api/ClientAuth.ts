@@ -18,3 +18,17 @@ import axiosInstance from "@/lib/axiosConfig";
                     throw error;
                 }
             };
+
+export const validateCode = async ({ code, email }: { code: string; email: string }) => {
+                try {
+                    const reponse = await axiosInstance.post('/api/Client/validate-email', {
+                        code: '',
+                        email: ''
+                    });
+                    return reponse.data;
+                } catch (error) {
+                    console.error('Erreur lors de la valaidation du code:', error);
+                    throw error;
+                }
+
+            };

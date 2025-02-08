@@ -5,6 +5,7 @@ import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
 import { createUser } from "@/services/api/ClientAuth";
 import { RegisterFormSchema, FormState } from "@/lib/zodDefinitions";
+import InfoBulle from "@/components/infoBulle";
 
 
 export default function Register() {
@@ -62,7 +63,7 @@ export default function Register() {
 
             setSuccess(true);
             // Rediriger l'utilisateur après une inscription réussie
-            router.push('/login');
+            router.push('/client/emailvalidation');
         } catch (error) {
             setErrors({
                 message: 'Une erreur est survenue lors de l\'inscription.'
@@ -75,7 +76,7 @@ export default function Register() {
         <EncartForm titre={"Enregistrez-vous"} customWidth={"w-[614px]"}>
             <form onSubmit={onSubmit}>
                 <div className={"flex flex-col gap-4"}>
-                    <div>
+
                         <label htmlFor="email">Email</label>
                         <input
                             type="email"
@@ -86,11 +87,11 @@ export default function Register() {
                             required
                         />
                         {errors?.errors?.email && (
-                            <p className="text-red-500 text-sm">{errors.errors.email[0]}</p>
+                            <InfoBulle colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"} content={`${errors.errors.email[0]}`}/>
                         )}
-                    </div>
 
-                    <div>
+
+
                         <label htmlFor="mdp">Mot de passe</label>
                         <input
                             type="password"
@@ -101,11 +102,11 @@ export default function Register() {
                             required
                         />
                         {errors?.errors?.mdp && (
-                            <p className="text-red-500 text-sm">{errors.errors.mdp[0]}</p>
+                            <InfoBulle colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"} content={`${errors.errors.mdp[0]}`}/>
                         )}
-                    </div>
 
-                    <div>
+
+
                         <label htmlFor="nom">Nom</label>
                         <input
                             type="text"
@@ -116,11 +117,11 @@ export default function Register() {
                             required
                         />
                         {errors?.errors?.nom && (
-                            <p className="text-red-500 text-sm">{errors.errors.nom[0]}</p>
+                            <InfoBulle colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"} content={`${errors.errors.nom[0]}`}/>
                         )}
-                    </div>
 
-                    <div>
+
+
                         <label htmlFor="prenom">Prénom</label>
                         <input
                             type="text"
@@ -131,11 +132,11 @@ export default function Register() {
                             required
                         />
                         {errors?.errors?.prenom && (
-                            <p className="text-red-500 text-sm">{errors.errors.prenom[0]}</p>
+                            <InfoBulle colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"} content={`${errors.errors.prenom[0]}`}/>
                         )}
-                    </div>
 
-                    <div>
+
+
                         <label htmlFor="tel">Téléphone</label>
                         <input
                             type="tel"
@@ -145,12 +146,12 @@ export default function Register() {
                             onChange={handleChange}
                             required
                         />
-                        {/* Ajoute une validation pour le téléphone si nécessaire */}
-                    </div>
+
+
                 </div>
 
-                {errors?.message && <p className="text-red-500 mt-4">{errors.message}</p>}
-                {success && <p className="text-green-500 mt-4">Inscription réussie !</p>}
+                {errors?.message && <InfoBulle colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"} content={`${errors.message}`}/>}
+                {success && <InfoBulle colorClass={"bg-[#DCFCE7] border-[#022C22]"} content={"Inscription réussie !"}/>}
 
                 <div className={"flex flex-row-reverse gap-3 mt-6"}>
                     <Bouton
