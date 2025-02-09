@@ -47,7 +47,7 @@ export type FormState =
 export const SignupFormSchema = z.object({
 
     email: z.string().email({ message: 'Veuillez entrer un email valide' }).trim(),
-    password: z
+    motDePasse: z
         .string()
         .min(8, { message: '8 caracteres minimum' })
         .regex(/[a-zA-Z]/, { message: 'Doit contenir au moins une lettre' })
@@ -62,7 +62,7 @@ export type FormStateLogin =
     | {
     errors?: {
         email?: string[]
-        password?: string[]
+        motDePasse?: string[]
     }
     message?: string
 }

@@ -46,7 +46,7 @@ export default function Login() {
         // Validation des champs avec Zod
         const validatedFields = SignupFormSchema.safeParse({
             email: formData.email,
-            mdp: formData.motDePasse,
+            motDePasse: formData.motDePasse,
         });
 
         if (!validatedFields.success) {
@@ -66,7 +66,7 @@ export default function Login() {
 
             setSuccess(true);
             // Rediriger l'utilisateur après une connexion réussie
-            router.push('/client/emailvalidation');
+            router.back();
         } catch (error) {
             setErrors({
                 message: 'Une erreur est survenue lors de la connexion.'
@@ -94,6 +94,7 @@ export default function Login() {
                 setErrors({
                     message: 'Aucun compte trouvé avec cet email. Veuillez vous inscrire.'
                 });
+                router.push('/client/register')
             }
         } catch (error) {
             setErrors({
@@ -161,19 +162,19 @@ export default function Login() {
 
 
 
-                            <label htmlFor="mdp">Mot de passe</label>
+                            <label htmlFor="motDePasse">Mot de passe</label>
                             <input
                                 type="password"
                                 name="motDePasse"
-                                id="mdp"
+                                id="motDePasse"
                                 value={formData.motDePasse}
                                 onChange={handleChange}
                                 required
                             />
-                            {errors?.errors?.password && (
+                            {errors?.errors?.motDePasse && (
                                 <InfoBulle
                                     colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
-                                    content={errors.errors.password[0]}
+                                    content={errors.errors.motDePasse[0]}
                                 />
                             )}
 
