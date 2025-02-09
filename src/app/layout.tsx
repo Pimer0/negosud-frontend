@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { montserrat } from './fonts'
 import HeaderClient from "@/components/HeaderClient";
+import Footer from "@/components/footer";
 
 
 export const metadata: Metadata = {
@@ -15,12 +16,13 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="fr">
       <body
         className={montserrat.className}
       >
       <HeaderClient />
         {children}
+      <Footer/>
       </body>
     </html>
   );

@@ -5,4 +5,5 @@ export interface BoutonProps {
     widthClass?: string;
     onClick?: () => void;
     childrenIcon?: React.ReactNode;
+    customType?: "submit" | "reset" | "button" | undefined
 }
