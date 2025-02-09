@@ -42,3 +42,28 @@ export type FormState =
     message?: string;
 }
     | undefined;
+
+
+export const SignupFormSchema = z.object({
+
+    email: z.string().email({ message: 'Veuillez entrer un email valide' }).trim(),
+    password: z
+        .string()
+        .min(8, { message: '8 caracteres minimum' })
+        .regex(/[a-zA-Z]/, { message: 'Doit contenir au moins une lettre' })
+        .regex(/[0-9]/, { message: 'Doit contenir au moins un chiffre' })
+        .regex(/[^a-zA-Z0-9]/, {
+            message: 'Doit contenir au moins un caractere spéciale',
+        })
+        .trim(),
+})
+
+export type FormStateLogin =
+    | {
+    errors?: {
+        email?: string[]
+        password?: string[]
+    }
+    message?: string
+}
+    | undefined

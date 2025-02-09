@@ -3,7 +3,7 @@ import Bouton from "@/components/Bouton";
 import EncartForm from "@/components/EncartForm";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { createUser } from "@/services/api/ClientAuth";
+import { createClient } from "@/services/api/ClientAuth";
 import { RegisterFormSchema, FormState } from "@/lib/zodDefinitions";
 import InfoBulle from "@/components/infoBulle";
 
@@ -27,6 +27,8 @@ export default function Register() {
             [name]: value
         }));
     };
+
+
 
     const onSubmit = async (event: FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -53,7 +55,7 @@ export default function Register() {
 
         try {
             // Appel du service pour créer un utilisateur
-            await createUser({
+            await createClient({
                 nom: formData.nom,
                 prenom: formData.prenom,
                 email: formData.email,
@@ -151,7 +153,7 @@ export default function Register() {
                 </div>
 
                 {errors?.message && <InfoBulle colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"} content={`${errors.message}`}/>}
-                {success && <InfoBulle colorClass={"bg-[#DCFCE7] border-[#022C22]"} content={"Inscription réussie !"}/>}
+                {success && <InfoBulle colorClass={"bg-[#DCFCE7] text-[#022C22] border-[#022C22]"} content={"Inscription réussie !"}/>}
 
                 <div className={"flex flex-row-reverse gap-3 mt-6"}>
                     <Bouton

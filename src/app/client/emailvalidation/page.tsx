@@ -93,7 +93,7 @@ export default function EmailValidation() {
                 )}
                 {success && (
                     <InfoBulle
-                        colorClass={"bg-[#DCFCE7] border-[#022C22]"}
+                        colorClass={"bg-[#DCFCE7] border-[#022C22] text-[#022C22]"}
                         content={"Compte validé ! Redirection..."}
                     />
                 )}
