@@ -34,7 +34,7 @@ export const loginClient = async ({ email, motDePasse }: { email: string; motDeP
 
 export const getClientByEmail = async ({email} : {email: string}) => {
     try {
-        const reponse =  await axiosInstance.post('/api/Utilisateur/exist', {email: email});
+        const reponse =  await axiosInstance.post('/api/Client/exist', {email: email});
     return reponse.data;
 } catch (error) {
     console.error('Erreur lors de la recuperation du client:', error);
