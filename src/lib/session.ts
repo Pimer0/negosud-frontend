@@ -5,6 +5,8 @@ import { SignJWT, jwtVerify } from 'jose'
 import { SessionPayload } from '@/interfaces/SessionPayload';
 import { cookies } from 'next/headers'
 
+import { ResponseData} from '@/interfaces/ResponseData'
+
 const secretKey = process.env.SESSION_SECRET
 const encodedKey = new TextEncoder().encode(secretKey)
 
@@ -27,18 +29,41 @@ export async function decrypt(session: string | undefined = '') {
     }
 }
 
-export async function createSession(userId: string) {
+
+
+export async function createSession(response: ResponseData) {
+    console.log('Raw response:', JSON.stringify(response, null, 2));
+
+    const clientId = response?.data?.clientId;
+    const token = response?.data?.acessToken || response?.tokenJWT;
+
+    console.log('Extracted data:', { clientId, token });
+
+    if (!clientId || !token) {
+        throw new Error(`Invalid session data: ${JSON.stringify(response)}`);
+    }
+
     const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
-    const session = await encrypt({ userId, expiresAt })
+
     const cookieStore = await cookies()
 
-    cookieStore.set('session', session, {
+    cookieStore.set('session', token, {
         httpOnly: true,
         secure: true,
         expires: expiresAt,
         sameSite: 'lax',
         path: '/',
     })
+
+    cookieStore.set('clientId', clientId.toString(), {
+        httpOnly: true,
+        secure: true,
+        expires: expiresAt,
+        sameSite: 'lax',
+        path: '/',
+    })
+
+    return response;
 }
 
 export async function updateSession() {
@@ -59,6 +84,14 @@ export async function updateSession() {
         sameSite: 'lax',
         path: '/',
     })
+}
+
+export async function getSession() {
+    const cookieStore = await cookies();
+    return {
+        token: cookieStore.get('token')?.value,
+        clientId: cookieStore.get('clientId')?.value
+    };
 }
 
 export async function deleteSession() {

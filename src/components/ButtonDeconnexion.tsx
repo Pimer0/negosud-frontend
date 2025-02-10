@@ -1,8 +1,8 @@
 'use client';
 
 import Link from 'next/link';
-import { deleteSession } from "@/lib/session";
 import { useRouter } from 'next/navigation';
+import {logoutClient} from "@/services/api/ClientAuth";
 
 export default function ButtonDeconnexion() {
     const router = useRouter();
@@ -10,7 +10,7 @@ export default function ButtonDeconnexion() {
     const handleDeco = (e: React.MouseEvent<HTMLAnchorElement, MouseEvent>) => {
         e.preventDefault();
         try {
-            deleteSession();
+            logoutClient();
             router.push('/');
         } catch (e) {
             console.error(e);

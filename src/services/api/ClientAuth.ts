@@ -2,7 +2,6 @@ import { clientT } from "@/interfaces/clientT";
 import { createSession, deleteSession } from "@/lib/session";
 import { fetchWithSession } from "@/lib/fetchWithSession";
 
-// Créer un nouveau client et créer une session
 export const createClient = async (client: clientT) => {
     try {
         const response = await fetchWithSession('/api/Client/register', {
@@ -18,9 +17,7 @@ export const createClient = async (client: clientT) => {
             }),
         });
 
-        // Créer une session après l'inscription réussie
-        const { userId } = response;
-        await createSession(userId);
+        await createSession(response);
 
         return response;
     } catch (error) {
@@ -40,9 +37,8 @@ export const loginClient = async ({ email, motDePasse }: { email: string; motDeP
             }),
         });
 
-        // Créer une session après une connexion réussie
-        const { userId } = response;
-        await createSession(userId);
+        // Pass the entire response to createSession
+        await createSession(response);
 
         return response;
     } catch (error) {
@@ -51,7 +47,7 @@ export const loginClient = async ({ email, motDePasse }: { email: string; motDeP
     }
 };
 
-// Récupérer un client par email (protégé par session)
+// Récupérer un client par email
 export const getClientByEmail = async ({ email }: { email: string }) => {
     try {
         const response = await fetchWithSession('/api/Client/exist', {

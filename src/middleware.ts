@@ -9,12 +9,13 @@ export async function middleware(request: NextRequest) {
 
     if (!payload) {
         // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
-        return NextResponse.redirect(new URL('/login', request.url));
+        return NextResponse.redirect(new URL('/client/login', request.url));
     }
 
     // Ajouter les informations de l'utilisateur à la requête
     request.headers.set('userId', payload.userId);
-    request.headers.set('DateExp', payload.expiresAt.toDateString());
+    // @ts-expect-error on lui passe quand meme date
+    request.headers.set('DateExp', payload.expiresAt);
     /*    request.headers.set('email', payload.email);
     request.headers.set('role', payload.role);*/
 
