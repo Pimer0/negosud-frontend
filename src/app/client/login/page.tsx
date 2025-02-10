@@ -93,6 +93,7 @@ export default function Login() {
             } else {
                 setErrors({
                     message: 'Aucun compte trouvé avec cet email. Veuillez vous inscrire.'
+
                 });
                 router.push('/client/register')
             }
@@ -101,6 +102,7 @@ export default function Login() {
                 message: 'Une erreur est survenue lors de la vérification de l\'email.'
             });
             console.error(error);
+            router.push('/client/register')
         }
     };
 
