@@ -1,33 +1,56 @@
 'use server'
 
 import 'server-only'
-import { SignJWT, jwtVerify } from 'jose'
+import { importSPKI, SignJWT, jwtVerify } from 'jose'
 import { SessionPayload } from '@/interfaces/SessionPayload';
 import { cookies } from 'next/headers'
+import { ResponseData } from '@/interfaces/ResponseData'
 
-import { ResponseData} from '@/interfaces/ResponseData'
-
-const secretKey = process.env.SESSION_SECRET
-const encodedKey = new TextEncoder().encode(secretKey)
+// 1. Déplacer la récupération de la clé dans une fonction asynchrone
+async function getPublicKey() {
+    const response = await fetch('http://localhost:5141/api/Jwt/public-key');
+    const publicKeyBase64 = await response.text();
+    // Ajout des retours à la ligne corrects pour le format PEM
+    const pemKey = `-----BEGIN PUBLIC KEY-----\n${publicKeyBase64.match(/.{1,64}/g)?.join('\n')}\n-----END PUBLIC KEY-----`;
+    return await importSPKI(pemKey, 'RS256');
+}
 
 export async function encrypt(payload: SessionPayload) {
-    return new SignJWT(payload)
-        .setProtectedHeader({ alg: 'HS256' })
-        .setIssuedAt()
-        .setExpirationTime('7d')
-        .sign(encodedKey)
+    const publicKey = await getPublicKey();
+
+    const jwt = new SignJWT(payload)
+        .setProtectedHeader({ alg: 'RS256' })
+        .setIssuedAt(Math.floor(Date.now() / 1000)) // Vérification de l'iat
+        .setExpirationTime('7d');
+
+    console.log("JWT avant signature:", jwt);
+
+    const signedToken = await jwt.sign(publicKey);
+    console.log("JWT signé:", signedToken);
+
+    return signedToken;
 }
+
 
 export async function decrypt(session: string | undefined = '') {
     try {
-        const { payload } = await jwtVerify(session, encodedKey, {
-            algorithms: ['HS256'],
-        })
-        return payload
+        if (!session) {
+            return null;
+        }
+
+        const publicKey = await getPublicKey();
+
+        const { payload } = await jwtVerify(session, publicKey, {
+            algorithms: ['RS256'],
+        });
+
+        return payload;
     } catch (error) {
-        console.log('Failed to verify session', error)
+        console.error('Erreur de déchiffrement:', error);
+        throw error;
     }
 }
+
 
 
 
