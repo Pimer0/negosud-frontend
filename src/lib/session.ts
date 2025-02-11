@@ -16,15 +16,21 @@ async function getPublicKey() {
 }
 
 export async function encrypt(payload: SessionPayload) {
-    // 2. Récupérer la clé publique pour le chiffrement
     const publicKey = await getPublicKey();
 
-    return new SignJWT(payload)
+    const jwt = new SignJWT(payload)
         .setProtectedHeader({ alg: 'RS256' })
-        .setIssuedAt()
-        .setExpirationTime('7d')
-        .sign(publicKey) // Utiliser la clé publique ici
+        .setIssuedAt(Math.floor(Date.now() / 1000)) // Vérification de l'iat
+        .setExpirationTime('7d');
+
+    console.log("JWT avant signature:", jwt);
+
+    const signedToken = await jwt.sign(publicKey);
+    console.log("JWT signé:", signedToken);
+
+    return signedToken;
 }
+
 
 export async function decrypt(session: string | undefined = '') {
     try {
@@ -32,7 +38,6 @@ export async function decrypt(session: string | undefined = '') {
             return null;
         }
 
-        // 3. Utiliser la même fonction de récupération de clé
         const publicKey = await getPublicKey();
 
         const { payload } = await jwtVerify(session, publicKey, {
@@ -45,6 +50,7 @@ export async function decrypt(session: string | undefined = '') {
         throw error;
     }
 }
+
 
 
 
