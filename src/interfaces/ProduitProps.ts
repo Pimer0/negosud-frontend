@@ -1,10 +1,11 @@
 import {ReactNode} from "react";
+import { Famille } from "./Famille";
 
 export interface ProduitProps {
    articleId: number;
    reference: string;
    libelle: string;
-   famille: famille;
+   famille: Famille;
    prix: number;
 children: ReactNode;
 }

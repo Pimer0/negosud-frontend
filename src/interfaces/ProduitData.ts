@@ -1,8 +1,10 @@
+import { Famille } from './Famille';
+
 export interface ProduitData {
     articleId: number;
     reference: string;
     libelle: string;
-    famille: { nom: string | null };
+    famille: Famille;
     prix: number;
     quantite?: number;
     commandId?: number | null;

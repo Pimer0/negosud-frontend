@@ -13,7 +13,7 @@ const Produit: React.FC<ProduitProps> = ({libelle, famille, prix, children}) => 
                 </div>
                 <div>
                     <p className={"font-bold"}>{libelle}</p>
-                    <p>{famille}</p>
+                    <p>Famille: {famille.nom ?? "Inconnu"}</p>
                     <p className={"font-bold"}>{prix}€</p>
                 </div>
             </div>

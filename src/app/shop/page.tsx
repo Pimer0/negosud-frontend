@@ -38,7 +38,7 @@ export default function Shop() {
                         articleId={produit.articleId}
                         reference={produit.reference}
                         libelle={produit.libelle}
-                        famille={produit.famille?.nom ?? "Inconnu"}
+                        famille={produit.famille ?? { nom: "Inconnu" }} 
                         prix={produit.prix}
                     >
                         <GestionCartShop

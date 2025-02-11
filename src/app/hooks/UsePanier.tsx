@@ -64,7 +64,7 @@ const usePanier = (articleId: number, initialQuantite: number) => {
         fetchClientIdAndPanier();
     }, []);
 
-    const synchroniserPanier = useCallback(async (newQuantite: number) => {
+    const synchroniserPanier = useCallback(async (newQuantite: number, ligneCommandeId?: number | null) => {
         if (!clientId) {
             console.error("Aucun ID client disponible pour synchroniser le panier.");
             return;
@@ -78,7 +78,8 @@ const usePanier = (articleId: number, initialQuantite: number) => {
                 commandId,
                 clientId,
                 articleId,
-                newQuantite
+                newQuantite,
+                ligneCommandeId
             };
 
             const response = await fetch(`http://localhost:5141/api/Panier/update`, {
@@ -114,14 +115,14 @@ const usePanier = (articleId: number, initialQuantite: number) => {
             setIsLoading(false);
         }
     }, [articleId, clientId, commandId]);
-
-    const updatePanierVirtuel = useCallback(async (newQuantite: number) => {
+    
+    const updatePanierVirtuel = useCallback(async (newQuantite: number, ligneCommandeId?: number | null) => {
         setPanierVirtuel(prev => ({
             ...prev,
-            [articleId]: { quantite: newQuantite, ligneCommandeId: prev[articleId]?.ligneCommandeId || 0 }
+            [articleId]: { quantite: newQuantite, ligneCommandeId: ligneCommandeId || prev[articleId]?.ligneCommandeId || 0 }
         }));
         setQuantite(newQuantite);
-        await synchroniserPanier(newQuantite);
+        await synchroniserPanier(newQuantite, ligneCommandeId);
     }, [articleId, synchroniserPanier]);
 
     const handleError = (message: string) => {
