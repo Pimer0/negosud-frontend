@@ -1,7 +1,6 @@
-'use client';
-
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
-import usePanier from "@/app/hooks/UsePanier"; // Correct the import casing
+import usePanier from "@/app/hooks/UsePanier";
+import { usePanierContext } from "@/app/context/PanierContext";
 import { GestionCartShopProps } from '@/interfaces/GestionCartShopProps';
 
 const GestionCartShop: React.FC<GestionCartShopProps> = ({
@@ -10,11 +9,13 @@ const GestionCartShop: React.FC<GestionCartShopProps> = ({
     ligneCommandeId
 }) => {
     const { quantite, setQuantite, updatePanierVirtuel, error, isLoading } = usePanier(articleId, initialQuantite);
+    const { updatePanier } = usePanierContext(); // Utilisation du contexte
 
     const handleIncrement = async () => {
         const newQuantite = quantite + 1;
         setQuantite(newQuantite);
         await updatePanierVirtuel(newQuantite, ligneCommandeId);
+        updatePanier(); // Met à jour le contexte après modification
     };
 
     const handleDecrement = async () => {
@@ -22,6 +23,7 @@ const GestionCartShop: React.FC<GestionCartShopProps> = ({
             const newQuantite = quantite - 1;
             setQuantite(newQuantite);
             await updatePanierVirtuel(newQuantite, ligneCommandeId);
+            updatePanier(); // Met à jour le contexte après modification
         }
     };
 

@@ -5,3 +5,6 @@ interface PanierVirtuel {
         ligneCommandeId: number;
     };
 }
+interface PanierItem {
+    quantite: number;
+}
