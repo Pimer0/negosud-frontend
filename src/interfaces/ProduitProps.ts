@@ -8,9 +8,10 @@ export interface ProduitProps {
    famille: Famille;
    prix: number;
 children: ReactNode;
+img: string;
 }
 
 export interface famille {
    familleId: number;
-   nom: string;
+   nom: string | null;
 }
