@@ -7,4 +7,9 @@ interface PanierVirtuel {
 }
 interface PanierItem {
     quantite: number;
+    prix: number,
+}
+interface PanierData {
+    ligneCommandes: LigneCommande[];
+    commandeId: number;
 }

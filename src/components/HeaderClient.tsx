@@ -29,7 +29,7 @@ const HeaderClient: React.FC = async ({ style = 'flex row text-[#1E4147] active:
                 {existingSession && <ButtonDeconnexion />}
             </div>
             <div className={'flex justify-center gap-5'}>
-                <Link className={style} href={'/panier'}>
+                <Link className={style} href={'/basket'}>
                     <FiShoppingCart color={'#1E4147'} style={{ marginRight: '0.5rem' }} />
                     Panier <PanierCount/>
                 </Link>
