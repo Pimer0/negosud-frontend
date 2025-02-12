@@ -20,6 +20,12 @@ const usePanier = (articleId: number, initialQuantite: number) => {
         localStorage.setItem("panierVirtuel", JSON.stringify(panierVirtuel));
     }, [panierVirtuel]);
 
+    useEffect(() => {
+        if (panierVirtuel[articleId]) {
+            setQuantite(panierVirtuel[articleId].quantite);
+        }
+    }, [panierVirtuel, articleId]);
+
     const fetchExistingPanier = async (clientId: number) => {
         try {
             const response = await fetch(`http://localhost:5141/api/Panier/${clientId}`);
@@ -74,19 +80,35 @@ const usePanier = (articleId: number, initialQuantite: number) => {
         setError(null);
 
         try {
-            const requestBody = {
+            let response = null;
+            if (!commandId) {
+                const requestBody = {
+                    clientId,
+                    articleId,
+                    newQuantite,
+                };
+
+                response = await fetch(`http://localhost:5141/api/Panier/create`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody),
+                });
+
+            } else {
+                const requestBody = {
                 commandId,
                 clientId,
                 articleId,
                 newQuantite,
                 ligneCommandeId
-            };
+                };
 
-            const response = await fetch(`http://localhost:5141/api/Panier/update`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(requestBody),
-            });
+                response = await fetch(`http://localhost:5141/api/Panier/update`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(requestBody),
+                });
+            }
 
             if (!response.ok) {
                 const errorData = await response.json();
@@ -115,7 +137,7 @@ const usePanier = (articleId: number, initialQuantite: number) => {
             setIsLoading(false);
         }
     }, [articleId, clientId, commandId]);
-    
+
     const updatePanierVirtuel = useCallback(async (newQuantite: number, ligneCommandeId?: number | null) => {
         setPanierVirtuel(prev => ({
             ...prev,
