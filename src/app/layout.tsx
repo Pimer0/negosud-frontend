@@ -5,7 +5,6 @@ import HeaderClient from "@/components/HeaderClient";
 import Footer from "@/components/footer";
 import { PanierProvider } from "@/app/context/PanierContext";
 
-
 export const metadata: Metadata = {
   title: "NegoSud",
   description: "NegoSud, vendeur de bibine",

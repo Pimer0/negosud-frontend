@@ -1,8 +1,8 @@
 export const imagesDecoy = [
-    '/vin.png',
-    '/vin.png',
-    '/vin.png',
-    '/vin.png',
-    '/vin.png',
-    '/vin.png'
+    '/rouge.png',
+    '/blanc.png',
+    '/Rose.png',
+    '/rouge.png',
+    '/blanc.png',
+    '/Rose.png'
 ];

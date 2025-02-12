@@ -9,7 +9,7 @@ const Produit: React.FC<ProduitProps> = ({libelle, famille, prix, children}) => 
             <div className={"flex-row flex gap-3"}>
 
                 <div className={"bg-white rounded-lg"}>
-                    <Image width={239} height={239} src={"/vin.png"} alt={"Vin"}/>
+                    <Image width={239} height={239} src={"/rouge.png"} alt={"Vin"}/>
                 </div>
                 <div>
                     <p className={"font-bold"}>{libelle}</p>

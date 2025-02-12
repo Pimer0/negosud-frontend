@@ -25,6 +25,7 @@ const HeaderClient: React.FC = async ({ style = 'flex row text-[#1E4147] active:
                         {lien.text}
                     </Link>
                 ))}
+                {!existingSession && <Link className={style} href={"/client/login"}>Connexion</Link>}
                 {existingSession && <ButtonDeconnexion />}
             </div>
             <div className={'flex justify-center gap-5'}>
