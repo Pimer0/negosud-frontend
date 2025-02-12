@@ -200,7 +200,7 @@ export default function Login() {
             )}
 
             {/* Lien vers la page d'administration */}
-            <Link className={`underline text-[#1E414] leading-none mb-3 mt-6`} href={"/admin/login"}>
+            <Link className={`underline text-[#1E414] leading-none mb-3 mt-6`} href={"/user/code"}>
                 Vous êtes un administrateur du site ?
             </Link>
         </EncartForm>
