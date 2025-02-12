@@ -4,8 +4,6 @@ import Produit from "@/components/Produit";
 import GestionCartShop from "@/components/GestionCartShop";
 import {ProduitData} from "@/interfaces/ProduitData";
 
-
-
 export default function Shop() {
     const [produits, setProduits] = useState<ProduitData[]>([]);
 
@@ -16,7 +14,7 @@ export default function Shop() {
                 const data = await response.json();
 
                 if (data?.data) {
-                    setProduits(data.data); // Met à jour l'état avec les produits récupérés
+                    setProduits(data.data);
                 } else {
                     console.error("Données invalides reçues :", data);
                 }
@@ -38,7 +36,7 @@ export default function Shop() {
                         articleId={produit.articleId}
                         reference={produit.reference}
                         libelle={produit.libelle}
-                        famille={produit.famille ?? { nom: "Inconnu" }} 
+                        famille={produit.famille ?? { nom: "Inconnu" }}
                         prix={produit.prix}
                     >
                         <GestionCartShop
