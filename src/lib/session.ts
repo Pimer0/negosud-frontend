@@ -4,9 +4,8 @@ import 'server-only'
 import { importSPKI, SignJWT, jwtVerify } from 'jose'
 import { SessionPayload } from '@/interfaces/SessionPayload';
 import { cookies } from 'next/headers'
-import { ResponseData } from '@/interfaces/ResponseData'
+import {ResponseData, ResponseDataUser} from '@/interfaces/ResponseData'
 
-// 1. Déplacer la récupération de la clé dans une fonction asynchrone
 async function getPublicKey() {
     const response = await fetch('http://localhost:5141/api/Jwt/public-key');
     const publicKeyBase64 = await response.text();
@@ -66,9 +65,13 @@ export async function createSession(response: ResponseData) {
         throw new Error(`Invalid session data: ${JSON.stringify(response)}`);
     }
 
-    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000)
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
 
-    const cookieStore = await cookies()
+    const cookieStore = await cookies();
+
+    // Invalider la session utilisateur si elle existe
+    cookieStore.delete('sessionUser');
+    cookieStore.delete('UserId');
 
     cookieStore.set('session', token, {
         httpOnly: true,
@@ -76,7 +79,7 @@ export async function createSession(response: ResponseData) {
         expires: expiresAt,
         sameSite: 'lax',
         path: '/',
-    })
+    });
 
     cookieStore.set('clientId', clientId.toString(), {
         httpOnly: true,
@@ -84,10 +87,11 @@ export async function createSession(response: ResponseData) {
         expires: expiresAt,
         sameSite: 'lax',
         path: '/',
-    })
+    });
 
     return response;
 }
+
 
 export async function updateSession() {
     const session = (await cookies()).get('session')?.value
@@ -121,3 +125,57 @@ export async function deleteSession() {
     const cookieStore = await cookies()
     cookieStore.delete('session')
 }
+
+/// Partie Admin/User:
+
+export async function createSessionUser(response: ResponseDataUser) {
+    console.log('Raw response:', JSON.stringify(response, null, 2));
+
+    const Id = response?.data?.id;
+    const token = response?.tokenJWT;
+
+    console.log('Extracted data:', { Id, token });
+
+    if (!Id || !token) {
+        throw new Error(`Invalid session data: ${JSON.stringify(response)}`);
+    }
+
+    const expiresAt = new Date(Date.now() + 7 * 24 * 60 * 60 * 1000);
+
+    const cookieStore = await cookies();
+
+    // Invalider la session client si elle existe
+    cookieStore.delete('session');
+    cookieStore.delete('clientId');
+
+    cookieStore.set('sessionUser', token, {
+        httpOnly: true,
+        secure: true,
+        expires: expiresAt,
+        sameSite: 'lax',
+        path: '/',
+    });
+
+    cookieStore.set('UserId', Id.toString(), {
+        httpOnly: true,
+        secure: true,
+        expires: expiresAt,
+        sameSite: 'lax',
+        path: '/',
+    });
+
+    return response;
+}
+
+export async function getSessionUser() {
+    const cookieStore = await cookies();
+    return {
+        token: cookieStore.get('token')?.value,
+        UserId: cookieStore.get('UserId')?.value
+    };
+}
+
+export async function logoutUser() {
+    const cookieStore = await cookies();
+    cookieStore.delete('sessionUser')
+};

@@ -1,31 +1,29 @@
 import type { Metadata } from "next";
 import "./globals.css";
 import { montserrat } from './fonts'
-import HeaderClient from "@/components/HeaderClient";
 import Footer from "@/components/footer";
 import { PanierProvider } from "@/app/context/PanierContext";
+import SessionHeader from "@/components/SessionHeader";
 
 export const metadata: Metadata = {
-  title: "NegoSud",
-  description: "NegoSud, vendeur de bibine",
+    title: "NegoSud",
+    description: "NegoSud, vendeur de bibine",
 };
 
-
-
 export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
+                                       children,
+                                   }: Readonly<{
+    children: React.ReactNode;
 }>) {
-  return (
-    <html lang="fr">
-      <body className={montserrat.className}>
+    return (
+        <html lang="fr">
+        <body className={montserrat.className}>
         <PanierProvider>
-          <HeaderClient />
-          {children}
-          <Footer />
+            <SessionHeader />
+            {children}
+            <Footer />
         </PanierProvider>
-      </body>
-    </html>
-  );
+        </body>
+        </html>
+    );
 }
