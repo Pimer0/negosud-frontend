@@ -1,6 +1,6 @@
 'use client'
 import { useEffect } from 'react';
-import { usePanierContext } from '@/app/context/PanierContext';
+import { usePanierContext } from '@/context/PanierContext';
 
 const PanierCount = () => {
     const { panierCount, updatePanier } = usePanierContext();

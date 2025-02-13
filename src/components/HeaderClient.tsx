@@ -21,7 +21,7 @@ const HeaderClient: React.FC<{ existingSession: RequestCookie | null, style?: st
                 {existingSession && <ButtonDeconnexion />}
             </div>
             <div className={'flex justify-center gap-5'}>
-                <Link className={style} href={'/panier'}>
+                <Link className={style} href={'/basket'}>
                     <FiShoppingCart color={'#1E4147'} style={{ marginRight: '0.5rem' }} />
                     Panier <PanierCount />
                 </Link>

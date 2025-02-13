@@ -1,6 +1,6 @@
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
-import usePanier from "@/app/hooks/UsePanier";
-import { usePanierContext } from "@/app/context/PanierContext";
+import usePanier from "@/hooks/UsePanier";
+import { usePanierContext } from "@/context/PanierContext";
 import { GestionCartShopProps } from '@/interfaces/GestionCartShopProps';
 
 const GestionCartShop: React.FC<GestionCartShopProps> = ({
