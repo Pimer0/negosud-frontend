@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { montserrat } from './fonts'
 import Footer from "@/components/footer";
-import { PanierProvider } from "@/app/context/PanierContext";
+import { PanierProvider } from "@/context/PanierContext";
 import SessionHeader from "@/components/SessionHeader";
 
 export const metadata: Metadata = {
