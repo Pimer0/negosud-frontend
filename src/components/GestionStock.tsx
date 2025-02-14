@@ -10,22 +10,20 @@ const GestionStocks: React.FC<StockProps> = ({
                                                  children
                                              }) => {
     return (
-        <div className={"flex flex-row gap-9"}>
-            <p>{stockId}</p>
-            <p>{articleReference || "N/A"}</p>
-            <p>{quantite}</p>
-            <p>{seuilMinimum}</p>
-            <div>
-
-                    <input
-                        type="checkbox"
-                        checked={reapprovisionnementAuto}
-                        readOnly
-                        style={{ transform: "scale(1.5)" }}
-                    />
-
+        <div className={"flex flex-row gap-8"}>
+            <p className="w-1/6">{stockId}</p>
+            <p className="w-1/6">{articleReference || "N/A"}</p>
+            <p className="w-1/6">{quantite}</p>
+            <p className="w-1/6">{seuilMinimum}</p>
+            <div className="w-1/6">
+                <input
+                    type="checkbox"
+                    checked={reapprovisionnementAuto}
+                    readOnly
+                    style={{ transform: "scale(1.5)" }}
+                />
             </div>
-            <div>{children}</div>
+            <div className="w-1/6">{children}</div>
         </div>
     );
 };

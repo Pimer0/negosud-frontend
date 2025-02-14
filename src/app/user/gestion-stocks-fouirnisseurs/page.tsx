@@ -1,18 +1,19 @@
 'use client'
-
 import React, { useEffect, useState } from "react";
 import EncartForm from "@/components/EncartForm";
 import Bouton from "@/components/Bouton";
 import { IoMdAdd } from "react-icons/io";
 import { FaCartPlus } from "react-icons/fa6";
 import GestionStocks from "@/components/GestionStock";
-import {StockProps} from "@/interfaces/StockProps";
+import GestionFournisseur from "@/components/GestionFournisseur";
+import { FournisseurProps } from "@/interfaces/FournisseurProps";
+import { StockProps } from "@/interfaces/StockProps";
 
 export default function GestionStocksFournisseurs() {
     const [stocks, setStocks] = useState([]);
+    const [fournisseurs, setFournisseurs] = useState([]);
 
     useEffect(() => {
-
         const fetchStocks = async () => {
             try {
                 const response = await fetch("http://localhost:5141/api/Stocks");
@@ -25,7 +26,20 @@ export default function GestionStocksFournisseurs() {
             }
         };
 
+        const fetchFournisseurs = async () => {
+            try {
+                const response = await fetch("http://localhost:5141/api/Fournisseur");
+                const data = await response.json();
+                if (data.success) {
+                    setFournisseurs(data.data);
+                }
+            } catch (error) {
+                console.error("Erreur lors de la récupération des fournisseurs:", error);
+            }
+        };
+
         fetchStocks();
+        fetchFournisseurs();
     }, []);
 
     return (
@@ -37,26 +51,37 @@ export default function GestionStocksFournisseurs() {
                             <h3 className={"font-extrabold"}>Fournisseurs</h3>
                         </div>
                         <div className={"pb-4 flex flex-row gap-8 border-b border-b-gray-400"}>
-                            <p>Nom</p>
-                            <p>Raison sociale</p>
-                            <p>Email</p>
-                            <p>Telephone</p>
-                            <p>Edition</p>
+                            <p className="w-1/6">Nom</p>
+                            <p className="w-1/6">Raison sociale</p>
+                            <p className="w-1/6">Email</p>
+                            <p className="w-1/6">Telephone</p>
+                            <p className="w-1/6">Adresse</p>
+                            <p className="w-1/6">Edition</p>
                         </div>
+                        {fournisseurs.map((fournisseur: FournisseurProps, index) => (
+                            <GestionFournisseur
+                                key={index}
+                                nom={fournisseur.nom}
+                                raisonSociale={fournisseur.raisonSociale}
+                                email={fournisseur.email}
+                                tel={fournisseur.tel}
+                                adresse={fournisseur.adresse}
+                            />
+                        ))}
                     </div>
                     <div>
                         <div className={"mb-8"}>
                             <h3 className={"font-extrabold"}>Stocks</h3>
                         </div>
                         <div className={"pb-4 flex flex-row gap-8 border-b border-b-gray-400"}>
-                            <p>Ref lot</p>
-                            <p>Quantité</p>
-                            <p>Seuil minimum</p>
-                            <p>Réapprovisionnement auto</p>
-                            <p>Article</p>
-                            <p>Edition</p>
+                            <p className="w-1/6">Ref lot</p>
+                            <p className="w-1/6">Quantité</p>
+                            <p className="w-1/6">Seuil minimum</p>
+                            <p className="w-1/6">Réapprovisionnement auto</p>
+                            <p className="w-1/6">Article</p>
+                            <p className="w-1/6">Edition</p>
                         </div>
-                        {stocks.map((stock : StockProps) => (
+                        {stocks.map((stock: StockProps) => (
                             <GestionStocks
                                 key={stock.stockId}
                                 stockId={stock.stockId}
