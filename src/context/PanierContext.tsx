@@ -35,9 +35,6 @@ export const PanierProvider = ({ children }: { children: React.ReactNode }) => {
         }
     };
 
-    console.log("test");
-    
-
     // chargement des données au montage
     useEffect(() => {
         updatePanier();
