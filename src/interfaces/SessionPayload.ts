@@ -3,5 +3,6 @@ export interface SessionPayload {
 /*    email: string; // Email de l'utilisateur
     role: string; // Rôle de l'utilisateur (par exemple, "admin", "user")*/
     expiresAt: Date; // Date d'expiration de la session
+    exp: number;
     [key: string]: unknown;
 }
