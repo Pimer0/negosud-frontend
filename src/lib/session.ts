@@ -124,6 +124,7 @@ export async function getSession() {
 export async function deleteSession() {
     const cookieStore = await cookies()
     cookieStore.delete('session')
+    cookieStore.delete('clientId')
 }
 
 /// Partie Admin/User:
@@ -177,5 +178,6 @@ export async function getSessionUser() {
 
 export async function logoutUser() {
     const cookieStore = await cookies();
+    cookieStore.delete('UserId');
     cookieStore.delete('sessionUser')
 };

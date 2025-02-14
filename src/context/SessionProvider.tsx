@@ -13,12 +13,14 @@ const SessionContext = createContext<SessionUser | null>(null);
 export const SessionProvider = ({ children }: { children: ReactNode }) => {
     const [sessionUser, setSessionUser] = useState<SessionUser | null>(null);
 
-    useEffect(() => {
-        const fetchSessionUser = async () => {
-            const session = await getSessionUser();
-            setSessionUser(session);
-        };
+    const fetchSessionUser = async () => {
+        const session = await getSessionUser();
+        console.log("session", session);
+        
+        setSessionUser(session);
+    };
 
+    useEffect(() => {
         fetchSessionUser();
     }, []);
 

@@ -3,6 +3,7 @@ import "./globals.css";
 import { montserrat } from './fonts'
 import Footer from "@/components/footer";
 import { PanierProvider } from "@/context/PanierContext";
+import { SessionProvider } from "@/context/SessionProvider";
 import SessionHeader from "@/components/SessionHeader";
 
 export const metadata: Metadata = {
@@ -18,11 +19,13 @@ export default function RootLayout({
     return (
         <html lang="fr">
         <body className={montserrat.className}>
-        <PanierProvider>
-            <SessionHeader />
-            {children}
-            <Footer />
-        </PanierProvider>
+        <SessionProvider>
+            <PanierProvider>
+                <SessionHeader />
+                    {children}
+                    <Footer />
+            </PanierProvider>
+        </SessionProvider>
         </body>
         </html>
     );
