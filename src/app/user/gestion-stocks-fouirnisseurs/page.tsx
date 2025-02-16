@@ -8,11 +8,12 @@ import GestionStocks from "@/components/GestionStock";
 import GestionFournisseur from "@/components/GestionFournisseur";
 import { FournisseurProps } from "@/interfaces/FournisseurProps";
 import { StockProps } from "@/interfaces/StockProps";
+import { useRouter } from "next/navigation";
 
 export default function GestionStocksFournisseurs() {
     const [stocks, setStocks] = useState([]);
     const [fournisseurs, setFournisseurs] = useState([]);
-
+    const router = useRouter();
     useEffect(() => {
         const fetchStocks = async () => {
             try {
@@ -41,6 +42,10 @@ export default function GestionStocksFournisseurs() {
         fetchStocks();
         fetchFournisseurs();
     }, []);
+
+    const handleDeleteStock = (stockId: number) => {
+        setStocks((prevStocks) => prevStocks.filter((stock: StockProps) => stock.stockId !== stockId));
+    };
 
     return (
         <div>
@@ -79,7 +84,7 @@ export default function GestionStocksFournisseurs() {
                             <p className="w-1/6">Seuil minimum</p>
                             <p className="w-1/6">Réapprovisionnement auto</p>
                             <p className="w-1/6">Article</p>
-                            <p className="w-1/6">Edition</p>
+                            <p className="w-1/6">Suppression</p>
                         </div>
                         {stocks.map((stock: StockProps) => (
                             <GestionStocks
@@ -89,6 +94,7 @@ export default function GestionStocksFournisseurs() {
                                 quantite={stock.quantite}
                                 seuilMinimum={stock.seuilMinimum}
                                 reapprovisionnementAuto={stock.reapprovisionnementAuto}
+                                onDelete={handleDeleteStock}
                             />
                         ))}
                     </div>
@@ -98,6 +104,7 @@ export default function GestionStocksFournisseurs() {
                             childrenIcon={<IoMdAdd />}
                             colorClass={"bg-[#1E4147] text-white"}
                             hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
+                            onClick={() => router.push("/user/ajout-stocks-fournisseurs")}
                         />
                         <Bouton
                             text={"Passer commande"}

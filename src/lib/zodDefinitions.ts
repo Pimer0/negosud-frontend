@@ -67,3 +67,47 @@ export type FormStateLogin =
     message?: string
 }
     | undefined
+
+
+export const AjoutStockSchema = z.object({
+    quantite: z.number().min(1, { message: "La quantité doit être supérieure ou égale à 1" }),
+    refLot: z.string().nonempty({ message: "La référence du lot est requise" }),
+    seuilMinimum: z.number().min(0, { message: "Le seuil minimum ne peut pas être négatif" }),
+    reapprovisionnementAuto: z.enum(["Oui", "Non"], {
+        required_error: "Le champ réapprovisionnement automatique est requis",
+    }),
+});
+
+export type AjoutStockFormState =
+    | {
+    errors?: {
+        quantite?: string[];
+        refLot?: string[];
+        seuilMinimum?: string[];
+        reapprovisionnementAuto?: string[];
+    };
+    message?: string;
+}
+    | undefined;
+
+
+export const AjoutFournisseurSchema = z.object({
+    nom: z.string().nonempty({ message: "Le nom est requis" }),
+    raisonSociale: z.string().nonempty({ message: "La raison sociale est requise" }),
+    email: z.string().email({ message: "Saisir un email valide" }).trim(),
+    tel: z.string().regex(/^0[1-9]([ .-]?\d{2}){4}$/, {
+        message: "Rentrez un numéro de téléphone français valide",
+    }),
+});
+
+export type AjoutFournisseurFormState =
+    | {
+    errors?: {
+        nom?: string[];
+        raisonSociale?: string[];
+        email?: string[];
+        tel?: string[];
+    };
+    message?: string;
+}
+    | undefined;
