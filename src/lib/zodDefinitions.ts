@@ -73,9 +73,9 @@ export const AjoutStockSchema = z.object({
     quantite: z.number().min(1, { message: "La quantité doit être supérieure ou égale à 1" }),
     refLot: z.string().nonempty({ message: "La référence du lot est requise" }),
     seuilMinimum: z.number().min(0, { message: "Le seuil minimum ne peut pas être négatif" }),
-    reapprovisionnementAuto: z.enum(["Oui", "Non"], {
-        required_error: "Le champ réapprovisionnement automatique est requis",
-    }),
+reapprovisionnementAuto: z.boolean({
+    required_error: "Le champ réapprovisionnement automatique est requis",
+}),
 });
 
 export type AjoutStockFormState =

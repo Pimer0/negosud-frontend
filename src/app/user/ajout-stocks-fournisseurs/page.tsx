@@ -7,6 +7,7 @@ import InfoBulle from "@/components/infoBulle";
 
 interface ValidationErrors {
     errors?: {
+        articleId?: string[];
         quantite?: string[];
         refLot?: string[];
         seuilMinimum?: string[];
@@ -22,15 +23,18 @@ interface ValidationErrors {
 export default function AjoutStocksFournisseurs() {
     const [formType, setFormType] = useState("stock");
     const [formData, setFormData] = useState({
+        articleId: '',
         quantite: '',
         refLot: '',
         seuilMinimum: '',
-        reapprovisionnementAuto: 'Oui',
+        reapprovisionnementAuto: true, // Valeur par défaut
         nom: '',
         raisonSociale: '',
         email: '',
         tel: '',
     });
+
+
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [success, setSuccess] = useState<boolean>(false);
 
@@ -41,6 +45,15 @@ export default function AjoutStocksFournisseurs() {
             [name]: value
         }));
     };
+
+    const handleReapprovisionnementAutoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        const value = e.target.value === "Oui"; // Convertir en booléen
+        setFormData(prevState => ({
+            ...prevState,
+            reapprovisionnementAuto: value
+        }));
+    };
+
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -55,7 +68,7 @@ export default function AjoutStocksFournisseurs() {
                 quantite: Number(formData.quantite),
                 refLot: formData.refLot,
                 seuilMinimum: Number(formData.seuilMinimum),
-                reapprovisionnementAuto: formData.reapprovisionnementAuto === "Oui",
+                reapprovisionnementAuto: formData.reapprovisionnementAuto, // Utilisez directement la valeur booléenne
             };
 
             const result = AjoutStockSchema.safeParse(data);
@@ -98,17 +111,28 @@ export default function AjoutStocksFournisseurs() {
                 if (response.ok) {
                     setSuccess(true);
                     setFormData({
+                        articleId: "",
                         quantite: '',
                         refLot: '',
                         seuilMinimum: '',
-                        reapprovisionnementAuto: 'Oui',
+                        reapprovisionnementAuto: true,
                         nom: '',
                         raisonSociale: '',
                         email: '',
                         tel: '',
                     });
+
+                    if (!response.ok) {
+                        const errorText = await response.text();
+                        console.log("Réponse d'erreur de l'API:", errorText);
+                        setErrors({ errors: { general: [errorText || "Erreur lors de la soumission des données."] } });
+                        return;
+                    }
                 } else {
-                    setErrors({ errors: { general: ["Erreur lors de la soumission des données."] } });
+                    const errorText = await response.text();
+                    console.log("Réponse d'erreur de l'API:", errorText);
+                    setErrors({ errors: { general: [errorText || "Erreur lors de la soumission des données."] } });
+                    return;
                 }
             } catch (error) {
                 setErrors({ errors: { general: ["Erreur lors de la connexion au serveur."] } });
@@ -116,6 +140,8 @@ export default function AjoutStocksFournisseurs() {
             }
         }
     };
+
+
 
     const handleFormTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormType(event.target.value);
@@ -130,18 +156,36 @@ export default function AjoutStocksFournisseurs() {
                     <fieldset onChange={(e) => handleFormTypeChange(e as React.ChangeEvent<HTMLInputElement>)}>
                         <legend>Choisissez une donnée à ajouter:</legend>
                         <div>
-                            <input type="radio" id="stock" name="type" value="stock" checked={formType === "stock"} />
+                            <input type="radio" id="stock" name="type" value="stock" checked={formType === "stock"} className={"m-3 w-fit"}/>
                             <label htmlFor="stock">Stock</label>
                         </div>
                         <div>
-                            <input type="radio" id="fournisseur" name="type" value="fournisseur" checked={formType === "fournisseur"} />
+                            <input type="radio" id="fournisseur" name="type" value="fournisseur" checked={formType === "fournisseur"} className={"m-3 w-fit"}/>
                             <label htmlFor="fournisseur">Fournisseur</label>
                         </div>
                     </fieldset>
                 </div>
                 {formType === "stock" && (
                     <form onSubmit={handleSubmit}>
-                        <div>
+                        <div className={"flex flex-col"}>
+                            <label htmlFor="articleId">ID de l&apos;article</label>
+                            <input
+                                type="number"
+                                name="articleId"
+                                id="articleId"
+                                value={formData.articleId}
+                                onChange={handleChange}
+                                required
+                            />
+                            {errors.errors?.articleId && (
+                                <InfoBulle
+                                    colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
+                                    content={errors.errors.articleId[0]}
+                                />
+                            )}
+                        </div>
+
+                        <div className={"flex flex-col"}>
                             <label htmlFor="quantite">Quantité</label>
                             <input
                                 type="number"
@@ -158,7 +202,7 @@ export default function AjoutStocksFournisseurs() {
                                 />
                             )}
                         </div>
-                        <div>
+                        <div className={"flex flex-col"}>
                             <label htmlFor="refLot">Référence du lot</label>
                             <input
                                 type="text"
@@ -175,7 +219,7 @@ export default function AjoutStocksFournisseurs() {
                                 />
                             )}
                         </div>
-                        <div>
+                        <div className={"flex flex-col"}>
                             <label htmlFor="seuilMinimum">Seuil minimum</label>
                             <input
                                 type="number"
@@ -192,15 +236,16 @@ export default function AjoutStocksFournisseurs() {
                                 />
                             )}
                         </div>
-                        <div>
+                        <div className={"flex flex-col"}>
                             <label htmlFor="reapprovisionnementAuto">Réapprovisionnement auto</label>
                             <div>
                                 <input
                                     type="radio"
                                     name="reapprovisionnementAuto"
                                     value="Oui"
-                                    checked={formData.reapprovisionnementAuto === "Oui"}
-                                    onChange={handleChange}
+                                    checked={formData.reapprovisionnementAuto === true}
+                                    onChange={handleReapprovisionnementAutoChange}
+                                    className={"m-3 w-fit"}
                                 />
                                 <label>Oui</label>
                             </div>
@@ -209,8 +254,9 @@ export default function AjoutStocksFournisseurs() {
                                     type="radio"
                                     name="reapprovisionnementAuto"
                                     value="Non"
-                                    checked={formData.reapprovisionnementAuto === "Non"}
-                                    onChange={handleChange}
+                                    checked={formData.reapprovisionnementAuto === false}
+                                    onChange={handleReapprovisionnementAutoChange}
+                                    className={"m-3 w-fit"}
                                 />
                                 <label>Non</label>
                             </div>
@@ -234,7 +280,7 @@ export default function AjoutStocksFournisseurs() {
                 )}
                 {formType === "fournisseur" && (
                     <form onSubmit={handleSubmit}>
-                        <div>
+                        <div className={"flex flex-col"}>
                             <label htmlFor="nom">Nom</label>
                             <input
                                 type="text"
@@ -251,7 +297,7 @@ export default function AjoutStocksFournisseurs() {
                                 />
                             )}
                         </div>
-                        <div>
+                        <div className={"flex flex-col"}>
                             <label htmlFor="raisonSociale">Raison Sociale</label>
                             <input
                                 type="text"
@@ -268,7 +314,7 @@ export default function AjoutStocksFournisseurs() {
                                 />
                             )}
                         </div>
-                        <div>
+                        <div className={"flex flex-col"}>
                             <label htmlFor="email">Email</label>
                             <input
                                 type="email"
@@ -285,7 +331,7 @@ export default function AjoutStocksFournisseurs() {
                                 />
                             )}
                         </div>
-                        <div>
+                        <div className={"flex flex-col"}>
                             <label htmlFor="tel">Téléphone</label>
                             <input
                                 type="tel"
