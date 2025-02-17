@@ -23,7 +23,7 @@ export const liensHeaderUser = [
         text: 'Accueil'
     },
     {
-        pathname: 'user/stock',
+        pathname: '/user/gestion-stocks-fouirnisseurs',
         text: 'Stock'
     },
     {

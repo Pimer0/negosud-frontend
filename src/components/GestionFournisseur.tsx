@@ -1,7 +1,9 @@
 import React from "react";
 import { FournisseurProps } from "@/interfaces/FournisseurProps";
+import BouttonModification from "@/components/BouttonModification";
 
 const GestionFournisseur: React.FC<FournisseurProps> = ({
+                                                            fournisseurId,
                                                             nom,
                                                             raisonSociale,
                                                             email,
@@ -15,7 +17,9 @@ const GestionFournisseur: React.FC<FournisseurProps> = ({
             <p className="w-1/6">{email}</p>
             <p className="w-1/6">{tel}</p>
             <p className="w-1/6">{adresse || "N/A"}</p>
-            <p className="w-1/6">Édition</p>
+            <div className="w-1/6">
+                <BouttonModification fournisseurId={fournisseurId} />
+            </div>
         </div>
     );
 };

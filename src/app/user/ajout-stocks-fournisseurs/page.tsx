@@ -4,6 +4,7 @@ import Bouton from "@/components/Bouton";
 import React, { useState } from "react";
 import { AjoutStockSchema, AjoutFournisseurSchema } from "@/lib/zodDefinitions";
 import InfoBulle from "@/components/infoBulle";
+import { useRouter } from "next/navigation";
 
 interface ValidationErrors {
     errors?: {
@@ -21,19 +22,19 @@ interface ValidationErrors {
 }
 
 export default function AjoutStocksFournisseurs() {
+    const router = useRouter();
     const [formType, setFormType] = useState("stock");
     const [formData, setFormData] = useState({
-        articleId: '',
-        quantite: '',
-        refLot: '',
-        seuilMinimum: '',
-        reapprovisionnementAuto: true, // Valeur par défaut
-        nom: '',
-        raisonSociale: '',
-        email: '',
-        tel: '',
+        articleId: 0, // Initialisé à 0
+        quantite: 0, // Initialisé à 0
+        refLot: '', // Chaîne vide
+        seuilMinimum: 0, // Initialisé à 0
+        reapprovisionnementAuto: true, // Booléen
+        nom: '', // Chaîne vide
+        raisonSociale: '', // Chaîne vide
+        email: '', // Chaîne vide
+        tel: '', // Chaîne vide
     });
-
 
     const [errors, setErrors] = useState<ValidationErrors>({});
     const [success, setSuccess] = useState<boolean>(false);
@@ -42,7 +43,7 @@ export default function AjoutStocksFournisseurs() {
         const { name, value } = e.target;
         setFormData(prevState => ({
             ...prevState,
-            [name]: value
+            [name]: name === "articleId" || name === "quantite" || name === "seuilMinimum" ? Number(value) : value,
         }));
     };
 
@@ -50,10 +51,9 @@ export default function AjoutStocksFournisseurs() {
         const value = e.target.value === "Oui"; // Convertir en booléen
         setFormData(prevState => ({
             ...prevState,
-            reapprovisionnementAuto: value
+            reapprovisionnementAuto: value,
         }));
     };
-
 
     const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
         event.preventDefault();
@@ -65,10 +65,11 @@ export default function AjoutStocksFournisseurs() {
 
         if (formType === "stock") {
             data = {
-                quantite: Number(formData.quantite),
+                articleId: formData.articleId,
+                quantite: formData.quantite,
                 refLot: formData.refLot,
-                seuilMinimum: Number(formData.seuilMinimum),
-                reapprovisionnementAuto: formData.reapprovisionnementAuto, // Utilisez directement la valeur booléenne
+                seuilMinimum: formData.seuilMinimum,
+                reapprovisionnementAuto: formData.reapprovisionnementAuto,
             };
 
             const result = AjoutStockSchema.safeParse(data);
@@ -79,7 +80,6 @@ export default function AjoutStocksFournisseurs() {
             }
 
             url = "http://localhost:5141/api/Stocks";
-
         } else if (formType === "fournisseur") {
             data = {
                 nom: formData.nom,
@@ -111,28 +111,21 @@ export default function AjoutStocksFournisseurs() {
                 if (response.ok) {
                     setSuccess(true);
                     setFormData({
-                        articleId: "",
-                        quantite: '',
+                        articleId: 0,
+                        quantite: 0,
                         refLot: '',
-                        seuilMinimum: '',
+                        seuilMinimum: 0,
                         reapprovisionnementAuto: true,
                         nom: '',
                         raisonSociale: '',
                         email: '',
                         tel: '',
                     });
-
-                    if (!response.ok) {
-                        const errorText = await response.text();
-                        console.log("Réponse d'erreur de l'API:", errorText);
-                        setErrors({ errors: { general: [errorText || "Erreur lors de la soumission des données."] } });
-                        return;
-                    }
+                    router.push("/user/gestion-stocks-fournisseurs");
                 } else {
                     const errorText = await response.text();
                     console.log("Réponse d'erreur de l'API:", errorText);
                     setErrors({ errors: { general: [errorText || "Erreur lors de la soumission des données."] } });
-                    return;
                 }
             } catch (error) {
                 setErrors({ errors: { general: ["Erreur lors de la connexion au serveur."] } });
@@ -140,8 +133,6 @@ export default function AjoutStocksFournisseurs() {
             }
         }
     };
-
-
 
     const handleFormTypeChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         setFormType(event.target.value);
@@ -153,7 +144,7 @@ export default function AjoutStocksFournisseurs() {
         <EncartForm titre={"Ajoutez une donnée"}>
             <div className={"flex flex-col"}>
                 <div className={"border-b-gray-400 border-b mb-4"}>
-                    <fieldset onChange={(e) => handleFormTypeChange(e as React.ChangeEvent<HTMLInputElement>)}>
+                    <fieldset onChange={(e) => handleFormTypeChange(e as unknown as React.ChangeEvent<HTMLInputElement>)}>
                         <legend>Choisissez une donnée à ajouter:</legend>
                         <div>
                             <input type="radio" id="stock" name="type" value="stock" checked={formType === "stock"} className={"m-3 w-fit"}/>
@@ -244,7 +235,7 @@ export default function AjoutStocksFournisseurs() {
                                     name="reapprovisionnementAuto"
                                     value="Oui"
                                     checked={formData.reapprovisionnementAuto === true}
-                                    onChange={handleReapprovisionnementAutoChange}
+                                    onChange={handleReapprovisionnementAutoChange} // Gestionnaire onChange
                                     className={"m-3 w-fit"}
                                 />
                                 <label>Oui</label>
@@ -255,7 +246,7 @@ export default function AjoutStocksFournisseurs() {
                                     name="reapprovisionnementAuto"
                                     value="Non"
                                     checked={formData.reapprovisionnementAuto === false}
-                                    onChange={handleReapprovisionnementAutoChange}
+                                    onChange={handleReapprovisionnementAutoChange} // Gestionnaire onChange
                                     className={"m-3 w-fit"}
                                 />
                                 <label>Non</label>
@@ -268,7 +259,10 @@ export default function AjoutStocksFournisseurs() {
                             )}
                         </div>
                         <div className={"flex flex-row justify-center gap-4 mt-8"}>
-                            <Bouton text={"Retour"} />
+                            <Bouton
+                                text={"Retour"}
+                                onClick={() => router.back()}
+                            />
                             <Bouton
                                 text={"Créer"}
                                 colorClass={"bg-[#1E4147] text-white"}
@@ -349,7 +343,10 @@ export default function AjoutStocksFournisseurs() {
                             )}
                         </div>
                         <div className={"flex flex-row justify-center gap-4 mt-8"}>
-                            <Bouton text={"Retour"} />
+                            <Bouton
+                                text={"Retour"}
+                                onClick={() => router.back()}
+                            />
                             <Bouton
                                 text={"Créer"}
                                 colorClass={"bg-[#1E4147] text-white"}

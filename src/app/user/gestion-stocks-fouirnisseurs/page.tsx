@@ -66,6 +66,7 @@ export default function GestionStocksFournisseurs() {
                         {fournisseurs.map((fournisseur: FournisseurProps, index) => (
                             <GestionFournisseur
                                 key={index}
+                                fournisseurId={fournisseur.fournisseurId}
                                 nom={fournisseur.nom}
                                 raisonSociale={fournisseur.raisonSociale}
                                 email={fournisseur.email}
