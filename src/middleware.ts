@@ -4,6 +4,13 @@ import type { NextRequest } from 'next/server';
 import { SessionPayload } from '@/interfaces/SessionPayload';
 
 export async function middleware(request: NextRequest) {
+    const pathname = request.nextUrl.pathname;
+
+    // Exclure la route /user/login et /user/code
+    if (pathname === '/user/login' || '/user/code') {
+        return NextResponse.next();
+    }
+
     const session = request.cookies.get('session')?.value;
     const sessionUser = request.cookies.get('sessionUser')?.value;
 
@@ -16,10 +23,10 @@ export async function middleware(request: NextRequest) {
         payload = await decrypt(sessionUser) as SessionPayload;
         isAdmin = true;
     }
-    
+
     if (!payload || new Date(payload.exp * 1000) < new Date()) {
         // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
-        return NextResponse.redirect(new URL(isAdmin ? '/admin/login' : '/client/login', request.url));
+        return NextResponse.redirect(new URL(isAdmin ? '/user/code' : '/client/login', request.url));
     }
 
     // Ajouter les informations de l'utilisateur à la requête
@@ -34,5 +41,5 @@ export async function middleware(request: NextRequest) {
 
 // Appliquer le middleware à certaines routes
 export const config = {
-    matcher: ['/dashboard', '/profile', '/shop', '/admin'], // Protéger ces routes
+    matcher: ['/profile', '/shop', '/user/:path*'], // Protéger ces routes
 };
