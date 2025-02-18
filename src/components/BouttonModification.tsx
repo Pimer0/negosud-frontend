@@ -12,7 +12,7 @@ const BouttonModification = ({ fournisseurId }: { fournisseurId: number }) => {
 
     return (
         <div>
-            <button onClick={handleModification}><FaPen size={30} /></button>
+            <button onClick={handleModification}><FaPen size={20} /></button>
         </div>
     );
 };

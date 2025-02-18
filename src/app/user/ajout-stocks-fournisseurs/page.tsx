@@ -6,7 +6,7 @@ import { AjoutStockSchema, AjoutFournisseurSchema } from "@/lib/zodDefinitions";
 import InfoBulle from "@/components/infoBulle";
 import { useRouter } from "next/navigation";
 
-interface ValidationErrors {
+export interface ValidationErrors {
     errors?: {
         articleId?: string[];
         quantite?: string[];

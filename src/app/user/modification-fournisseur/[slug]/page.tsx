@@ -3,12 +3,14 @@
 import InfoBulle from "@/components/infoBulle";
 import Bouton from "@/components/Bouton";
 import React, { useState, useEffect } from "react";
-import { useRouter, useParams } from 'next/navigation'; // Utilisez `useParams` pour les routes dynamiques
+import { useRouter, useParams } from 'next/navigation';
+import EncartForm from "@/components/EncartForm";
+import {ValidationErrors} from "@/app/user/ajout-stocks-fournisseurs/page";
 
 export default function ModificationFournisseur() {
     const router = useRouter();
     const params = useParams(); // Récupère les paramètres dynamiques
-    const [errors, setErrors] = useState({});
+    const [errors] = useState<ValidationErrors>({});
     const [success, setSuccess] = useState(false);
     const [formData, setFormData] = useState({
         fournisseurId: 0,
@@ -73,6 +75,7 @@ export default function ModificationFournisseur() {
             if (response.ok) {
                 setSuccess(true);
                 console.log("Fournisseur modifié avec succès");
+                router.push("/user/gestion-stocks-fouirnisseurs")
             } else {
                 console.error("Erreur lors de la modification");
             }
@@ -82,87 +85,96 @@ export default function ModificationFournisseur() {
     };
 
     return (
-        <form onSubmit={handleSubmit}>
-            <div className={"flex flex-col"}>
-                <label htmlFor="nom">Nom</label>
-                <input
-                    type="text"
-                    name="nom"
-                    id="nom"
-                    value={formData.nom}
-                    onChange={handleChange}
-                    required
-                />
-                {errors.nom && (
-                    <InfoBulle
-                        colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
-                        content={errors.nom}
+        <EncartForm titre={"Modifiez un fournisseur"}>
+            <form onSubmit={handleSubmit}>
+                <div className={"flex flex-col"}>
+                    <label htmlFor="nom">Nom</label>
+                    <input
+                        type="text"
+                        name="nom"
+                        id="nom"
+                        value={formData.nom}
+                        onChange={handleChange}
+                        required
                     />
-                )}
-            </div>
-            <div className={"flex flex-col"}>
-                <label htmlFor="raisonSociale">Raison Sociale</label>
-                <input
-                    type="text"
-                    name="raisonSociale"
-                    id="raisonSociale"
-                    value={formData.raisonSociale}
-                    onChange={handleChange}
-                    required
-                />
-                {errors.raisonSociale && (
-                    <InfoBulle
-                        colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
-                        content={errors.raisonSociale}
+                    {errors.errors?.nom && (
+                        <InfoBulle
+                            colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
+                            content={errors.errors?.nom[0]}
+                        />
+                    )}
+                </div>
+                <div className={"flex flex-col"}>
+                    <label htmlFor="raisonSociale">Raison Sociale</label>
+                    <input
+                        type="text"
+                        name="raisonSociale"
+                        id="raisonSociale"
+                        value={formData.raisonSociale}
+                        onChange={handleChange}
+                        required
                     />
-                )}
-            </div>
-            <div className={"flex flex-col"}>
-                <label htmlFor="email">Email</label>
-                <input
-                    type="email"
-                    name="email"
-                    id="email"
-                    value={formData.email}
-                    onChange={handleChange}
-                    required
-                />
-                {errors.email && (
-                    <InfoBulle
-                        colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
-                        content={errors.email}
+                    {errors.errors?.raisonSociale && (
+                        <InfoBulle
+                            colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
+                            content={errors.errors?.raisonSociale[0]}
+                        />
+                    )}
+                </div>
+                <div className={"flex flex-col"}>
+                    <label htmlFor="email">Email</label>
+                    <input
+                        type="email"
+                        name="email"
+                        id="email"
+                        value={formData.email}
+                        onChange={handleChange}
+                        required
                     />
-                )}
-            </div>
-            <div className={"flex flex-col"}>
-                <label htmlFor="tel">Téléphone</label>
-                <input
-                    type="tel"
-                    name="tel"
-                    id="tel"
-                    value={formData.tel}
-                    onChange={handleChange}
-                    required
-                />
-                {errors.tel && (
-                    <InfoBulle
-                        colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
-                        content={errors.tel}
+                    {errors.errors?.email && (
+                        <InfoBulle
+                            colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
+                            content={errors.errors?.email[0]}
+                        />
+                    )}
+                </div>
+                <div className={"flex flex-col"}>
+                    <label htmlFor="tel">Téléphone</label>
+                    <input
+                        type="tel"
+                        name="tel"
+                        id="tel"
+                        value={formData.tel}
+                        onChange={handleChange}
+                        required
                     />
-                )}
-            </div>
-            <div className={"flex flex-row justify-center gap-4 mt-8"}>
-                <Bouton
-                    text={"Retour"}
-                    onClick={() => router.back()}
+                    {errors.errors?.tel && (
+                        <InfoBulle
+                            colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
+                            content={errors.errors?.tel[0]}
+                        />
+                    )}
+                </div>
+                <div className={"flex flex-row justify-center gap-4 mt-8"}>
+                    <Bouton
+                        text={"Retour"}
+                        onClick={() => router.back()}
+                    />
+                    <Bouton
+                        text={"Modifier"}
+                        colorClass={"bg-[#1E4147] text-white"}
+                        hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
+                        customType={"submit"}
+                    />
+                </div>
+            </form>
+            {success && (
+                <InfoBulle
+                    colorClass={"bg-[#DCFCE7] border-[#022C22]"}
+                    content={"Données modifiées avec succès !"}
                 />
-                <Bouton
-                    text={"Modifier"}
-                    colorClass={"bg-[#1E4147] text-white"}
-                    hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
-                    customType={"submit"}
-                />
-            </div>
-        </form>
+            )}
+        </EncartForm>
+
     );
 }
