@@ -1,5 +1,6 @@
 import React from "react";
 import { StockProps } from "@/interfaces/StockProps";
+import BouttonModification from "@/components/BouttonModification";
 import BoutonSuppression from "@/components/BoutonSuppression";
 
 const GestionStocks: React.FC<StockProps & { onDelete: (stockId: number) => void }> = ({
@@ -9,7 +10,6 @@ const GestionStocks: React.FC<StockProps & { onDelete: (stockId: number) => void
                                                                                            seuilMinimum,
                                                                                            reapprovisionnementAuto,
                                                                                            onDelete,
-                                                                                           children
                                                                                        }) => {
     return (
         <div className={"flex flex-row gap-8"}>
@@ -27,9 +27,11 @@ const GestionStocks: React.FC<StockProps & { onDelete: (stockId: number) => void
                 />
             </div>
             <div className="w-1/6">
-                <BoutonSuppression stockId={stockId} onDelete={onDelete} />
+                <BouttonModification entityId={stockId} entityType="stock" />
             </div>
-            <div className="w-1/6">{children}</div>
+            <div className="w-1/6">
+                <BoutonSuppression entityId={stockId} entityType="stock" onDelete={onDelete} />
+            </div>
         </div>
     );
 };

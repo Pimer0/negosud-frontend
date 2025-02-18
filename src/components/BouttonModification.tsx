@@ -2,12 +2,21 @@ import React from "react";
 import { FaPen } from "react-icons/fa";
 import { useRouter } from "next/navigation";
 
-const BouttonModification = ({ fournisseurId }: { fournisseurId: number }) => {
+interface BouttonModificationProps {
+    entityId: number;
+    entityType: "stock" | "fournisseur";
+}
+
+const BouttonModification = ({ entityId, entityType }: BouttonModificationProps) => {
     const router = useRouter();
 
     const handleModification = () => {
-        // Rediriger vers la page de modification avec l'ID du fournisseur dans l'URL
-        router.push(`/user/modification-fournisseur/${fournisseurId}`);
+        // Rediriger vers la page de modification en fonction du type d'entité
+        if (entityType === "stock") {
+            router.push(`/user/modification-stock/${entityId}`);
+        } else if (entityType === "fournisseur") {
+            router.push(`/user/modification-fournisseur/${entityId}`);
+        }
     };
 
     return (

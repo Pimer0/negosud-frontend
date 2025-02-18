@@ -47,6 +47,12 @@ export default function GestionStocksFournisseurs() {
         setStocks((prevStocks) => prevStocks.filter((stock: StockProps) => stock.stockId !== stockId));
     };
 
+    const handleDeleteFournisseur = (fournisseurId: number) => {
+        setFournisseurs((prevFournisseurs) =>
+            prevFournisseurs.filter((fournisseur: FournisseurProps) => fournisseur.fournisseurId !== fournisseurId)
+        );
+    };
+
     return (
         <div>
             <EncartForm titre={"Gestion des stocks / fournisseurs"}>
@@ -72,6 +78,7 @@ export default function GestionStocksFournisseurs() {
                                 email={fournisseur.email}
                                 tel={fournisseur.tel}
                                 adresse={fournisseur.adresse}
+                                onDelete={handleDeleteFournisseur} // Passer la fonction de suppression
                             />
                         ))}
                     </div>
