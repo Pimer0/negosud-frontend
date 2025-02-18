@@ -1,11 +1,8 @@
 import React from "react";
 import { MdDeleteOutline } from "react-icons/md";
+import {BoutonSuppressionProps} from "@/interfaces/BoutonSuppressionProps";
 
-interface BoutonSuppressionProps {
-    entityId: number;
-    entityType: "stock" | "fournisseur";
-    onDelete: (id: number) => void;
-}
+
 
 const BoutonSuppression = ({ entityId, entityType, onDelete }: BoutonSuppressionProps) => {
     const handleSuppression = async () => {

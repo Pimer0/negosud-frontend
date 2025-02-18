@@ -5,35 +5,23 @@ import React, { useState } from "react";
 import { AjoutStockSchema, AjoutFournisseurSchema } from "@/lib/zodDefinitions";
 import InfoBulle from "@/components/infoBulle";
 import { useRouter } from "next/navigation";
+import {ValidationErrors} from "@/interfaces/ValidationsErrors";
 
-export interface ValidationErrors {
-    errors?: {
-        articleId?: string[];
-        quantite?: string[];
-        refLot?: string[];
-        seuilMinimum?: string[];
-        reapprovisionnementAuto?: string[];
-        nom?: string[];
-        raisonSociale?: string[];
-        email?: string[];
-        tel?: string[];
-        general?: string[];
-    };
-}
+
 
 export default function AjoutStocksFournisseurs() {
     const router = useRouter();
     const [formType, setFormType] = useState("stock");
     const [formData, setFormData] = useState({
-        articleId: 0, // Initialisé à 0
-        quantite: 0, // Initialisé à 0
-        refLot: '', // Chaîne vide
-        seuilMinimum: 0, // Initialisé à 0
-        reapprovisionnementAuto: true, // Booléen
-        nom: '', // Chaîne vide
-        raisonSociale: '', // Chaîne vide
-        email: '', // Chaîne vide
-        tel: '', // Chaîne vide
+        articleId: 0,
+        quantite: 0,
+        refLot: '',
+        seuilMinimum: 0,
+        reapprovisionnementAuto: true,
+        nom: '',
+        raisonSociale: '',
+        email: '',
+        tel: '',
     });
 
     const [errors, setErrors] = useState<ValidationErrors>({});
@@ -234,7 +222,7 @@ export default function AjoutStocksFournisseurs() {
                                     type="radio"
                                     name="reapprovisionnementAuto"
                                     value="Oui"
-                                    checked={formData.reapprovisionnementAuto === true}
+                                    checked={formData.reapprovisionnementAuto}
                                     onChange={handleReapprovisionnementAutoChange} // Gestionnaire onChange
                                     className={"m-3 w-fit"}
                                 />
@@ -245,7 +233,7 @@ export default function AjoutStocksFournisseurs() {
                                     type="radio"
                                     name="reapprovisionnementAuto"
                                     value="Non"
-                                    checked={formData.reapprovisionnementAuto === false}
+                                    checked={!formData.reapprovisionnementAuto}
                                     onChange={handleReapprovisionnementAutoChange} // Gestionnaire onChange
                                     className={"m-3 w-fit"}
                                 />

@@ -5,7 +5,8 @@ import Bouton from "@/components/Bouton";
 import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from 'next/navigation';
 import EncartForm from "@/components/EncartForm";
-import {ValidationErrors} from "@/app/user/ajout-stocks-fournisseurs/page";
+import {ValidationErrors} from "@/interfaces/ValidationsErrors";
+
 
 export default function ModificationFournisseur() {
     const router = useRouter();

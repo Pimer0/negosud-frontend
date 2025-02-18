@@ -2,10 +2,10 @@
 
 import { useParams, useRouter } from "next/navigation";
 import React, { useEffect, useState } from "react";
-import { ValidationErrors } from "@/app/user/ajout-stocks-fournisseurs/page";
 import EncartForm from "@/components/EncartForm";
 import InfoBulle from "@/components/infoBulle";
 import Bouton from "@/components/Bouton";
+import {ValidationErrors} from "@/interfaces/ValidationsErrors";
 
 export default function ModificationStock() {
     const router = useRouter();
@@ -17,10 +17,9 @@ export default function ModificationStock() {
         quantite: 0,
         refLot: "",
         seuilMinimum: 0,
-        reapprovisionnementAuto: true, // Valeur par défaut
+        reapprovisionnementAuto: true,
     });
 
-    // Récupérer le `slug` (ID du stock) depuis les paramètres de l'URL
     useEffect(() => {
         if (params.slug) {
             const stockId = parseInt(params.slug as string, 10);
@@ -34,14 +33,16 @@ export default function ModificationStock() {
                 try {
                     const response = await fetch(`http://localhost:5141/api/Stocks/${stockId}`);
                     const data = await response.json();
-                    if (data.success) {
+                    if (response.ok) {
                         setFormData(prevState => ({
                             ...prevState,
-                            quantite: data.data.quantite,
-                            refLot: data.data.refLot,
-                            seuilMinimum: data.data.seuilMinimum,
-                            reapprovisionnementAuto: data.data.reapprovisionnementAuto,
+                            quantite: data.quantite,
+                            refLot: data.refLot,
+                            seuilMinimum: data.seuilMinimum,
+                            reapprovisionnementAuto: data.reapprovisionnementAuto,
                         }));
+                    } else {
+                        console.error("Erreur lors de la récupération des données du stock");
                     }
                 } catch (error) {
                     console.error("Erreur lors de la récupération des données du stock", error);
@@ -126,20 +127,22 @@ export default function ModificationStock() {
                     <div className="flex gap-4">
                         <label>
                             <input
+                                className={"m-3 w-fit"}
                                 type="radio"
                                 name="reapprovisionnementAuto"
                                 value="true"
-                                checked={formData.reapprovisionnementAuto === true}
+                                checked={formData.reapprovisionnementAuto}
                                 onChange={() => setFormData(prevState => ({ ...prevState, reapprovisionnementAuto: true }))}
                             />
                             Oui
                         </label>
                         <label>
                             <input
+                                className={"m-3 w-fit"}
                                 type="radio"
                                 name="reapprovisionnementAuto"
                                 value="false"
-                                checked={formData.reapprovisionnementAuto === false}
+                                checked={!formData.reapprovisionnementAuto}
                                 onChange={() => setFormData(prevState => ({ ...prevState, reapprovisionnementAuto: false }))}
                             />
                             Non
@@ -173,6 +176,7 @@ export default function ModificationStock() {
                     <Bouton
                         text={"Retour"}
                         onClick={() => router.back()}
+                        customType={"button"}
                     />
                     <Bouton
                         text={"Modifier"}

@@ -78,6 +78,7 @@ reapprovisionnementAuto: z.boolean({
 }),
 });
 
+/*
 export type AjoutStockFormState =
     | {
     errors?: {
@@ -89,6 +90,7 @@ export type AjoutStockFormState =
     message?: string;
 }
     | undefined;
+*/
 
 
 export const AjoutFournisseurSchema = z.object({
@@ -100,6 +102,7 @@ export const AjoutFournisseurSchema = z.object({
     }),
 });
 
+/*
 export type AjoutFournisseurFormState =
     | {
     errors?: {
@@ -111,3 +114,4 @@ export type AjoutFournisseurFormState =
     message?: string;
 }
     | undefined;
+*/

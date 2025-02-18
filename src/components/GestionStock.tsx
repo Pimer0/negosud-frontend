@@ -13,8 +13,8 @@ const GestionStocks: React.FC<StockProps & { onDelete: (stockId: number) => void
                                                                                        }) => {
     return (
         <div className={"flex flex-row gap-8"}>
-            <p className="w-1/6">{stockId}</p>
-            <p className="w-1/6">{articleReference || "N/A"}</p>
+
+
             <p className="w-1/6">{quantite}</p>
             <p className="w-1/6">{seuilMinimum}</p>
             <div className="w-1/6">
@@ -26,6 +26,7 @@ const GestionStocks: React.FC<StockProps & { onDelete: (stockId: number) => void
                     className={"w-fit h-fit m-0"}
                 />
             </div>
+            <p className="w-1/6">{articleReference || "N/A"}</p>
             <div className="w-1/6">
                 <BouttonModification entityId={stockId} entityType="stock" />
             </div>

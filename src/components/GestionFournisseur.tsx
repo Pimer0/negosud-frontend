@@ -13,16 +13,16 @@ const GestionFournisseur: React.FC<FournisseurProps & { onDelete: (id: number) =
                                                                                                  onDelete,
                                                                                              }) => {
     return (
-        <div className={"flex flex-row gap-8"}>
-            <p className="w-1/6">{nom}</p>
-            <p className="w-1/6">{raisonSociale}</p>
-            <p className="w-1/6">{email}</p>
-            <p className="w-1/6">{tel}</p>
-            <p className="w-1/6">{adresse || "N/A"}</p>
-            <div className="w-1/6">
+        <div className="flex flex-row min-h-[60px] items-center border-b border-gray-200">
+            <p className="w-1/7 px-2 break-words overflow-hidden">{nom}</p>
+            <p className="w-1/7 px-2 break-words overflow-hidden">{raisonSociale}</p>
+            <p className="w-1/7 px-2 break-words overflow-hidden">{email}</p>
+            <p className="w-1/7 px-2 break-words overflow-hidden">{tel}</p>
+            <p className="w-1/7 px-2 break-words overflow-hidden">{adresse || "N/A"}</p>
+            <div className="w-1/7 px-2 flex items-center">
                 <BouttonModification entityId={fournisseurId} entityType="fournisseur" />
             </div>
-            <div className="w-1/6">
+            <div className="w-1/7 px-2 flex items-center">
                 <BoutonSuppression entityId={fournisseurId} entityType="fournisseur" onDelete={onDelete} />
             </div>
         </div>

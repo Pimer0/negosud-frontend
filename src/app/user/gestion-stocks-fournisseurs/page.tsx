@@ -14,6 +14,7 @@ export default function GestionStocksFournisseurs() {
     const [stocks, setStocks] = useState([]);
     const [fournisseurs, setFournisseurs] = useState([]);
     const router = useRouter();
+
     useEffect(() => {
         const fetchStocks = async () => {
             try {
@@ -57,18 +58,11 @@ export default function GestionStocksFournisseurs() {
         <div>
             <EncartForm titre={"Gestion des stocks / fournisseurs"}>
                 <div>
-                    <div className={"mb-8"}>
-                        <div className={"mb-8"}>
-                            <h3 className={"font-extrabold"}>Fournisseurs</h3>
+                    <div className="mb-8">
+                        <div className="mb-4 font-bold border-b border-gray-400">
+                            <h3 className="font-extrabold">Fournisseurs</h3>
                         </div>
-                        <div className={"pb-4 flex flex-row gap-8 border-b border-b-gray-400"}>
-                            <p className="w-1/6">Nom</p>
-                            <p className="w-1/6">Raison sociale</p>
-                            <p className="w-1/6">Email</p>
-                            <p className="w-1/6">Telephone</p>
-                            <p className="w-1/6">Adresse</p>
-                            <p className="w-1/6">Edition</p>
-                        </div>
+
                         {fournisseurs.map((fournisseur: FournisseurProps, index) => (
                             <GestionFournisseur
                                 key={index}
@@ -78,30 +72,31 @@ export default function GestionStocksFournisseurs() {
                                 email={fournisseur.email}
                                 tel={fournisseur.tel}
                                 adresse={fournisseur.adresse}
-                                onDelete={handleDeleteFournisseur} // Passer la fonction de suppression
+                                onDelete={handleDeleteFournisseur}
                             />
                         ))}
                     </div>
                     <div>
-                        <div className={"mb-8"}>
-                            <h3 className={"font-extrabold"}>Stocks</h3>
+                        <div className="mb-4">
+                            <h3 className="font-extrabold">Stocks</h3>
                         </div>
-                        <div className={"pb-4 flex flex-row gap-8 border-b border-b-gray-400"}>
-                            <p className="w-1/6">Ref lot</p>
-                            <p className="w-1/6">Quantité</p>
-                            <p className="w-1/6">Seuil minimum</p>
-                            <p className="w-1/6">Réapprovisionnement auto</p>
-                            <p className="w-1/6">Article</p>
-                            <p className="w-1/6">Suppression</p>
+                        <div className="grid grid-cols-6 gap-4 py-2 font-bold border-b border-gray-400 mb-4">
+
+                            <p>Quantité</p>
+                            <p>Seuil minimum</p>
+                            <p>Réappro auto</p>
+                            <p>Article</p>
+                            <p>Edition</p>
+                            <p>Suppression</p>
                         </div>
                         {stocks.map((stock: StockProps) => (
                             <GestionStocks
                                 key={stock.stockId}
                                 stockId={stock.stockId}
-                                articleReference={stock.articleReference}
                                 quantite={stock.quantite}
                                 seuilMinimum={stock.seuilMinimum}
                                 reapprovisionnementAuto={stock.reapprovisionnementAuto}
+                                articleReference={stock.articleReference}
                                 onDelete={handleDeleteStock}
                             />
                         ))}
@@ -109,14 +104,14 @@ export default function GestionStocksFournisseurs() {
                     <div className={"flex flex-row justify-center gap-4 mt-8"}>
                         <Bouton
                             text={"Ajout"}
-                            childrenIcon={<IoMdAdd />}
+                            childrenIcon={<IoMdAdd size={25}/>}
                             colorClass={"bg-[#1E4147] text-white"}
                             hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
                             onClick={() => router.push("/user/ajout-stocks-fournisseurs")}
                         />
                         <Bouton
                             text={"Passer commande"}
-                            childrenIcon={<FaCartPlus />}
+                            childrenIcon={<FaCartPlus style={{ marginLeft: "1rem" }} size={25} />}
                             colorClass={"bg-[#1E4147] text-white"}
                             hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
                         />
