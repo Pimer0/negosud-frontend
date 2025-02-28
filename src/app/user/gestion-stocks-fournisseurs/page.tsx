@@ -57,12 +57,12 @@ export default function GestionStocksFournisseurs() {
     return (
         <div>
             <EncartForm titre={"Gestion des stocks / fournisseurs"}>
+
                 <div>
                     <div className="mb-8">
                         <div className="mb-4 font-bold border-b border-gray-400">
                             <h3 className="font-extrabold">Fournisseurs</h3>
                         </div>
-
                         {fournisseurs.map((fournisseur: FournisseurProps, index) => (
                             <GestionFournisseur
                                 key={index}
