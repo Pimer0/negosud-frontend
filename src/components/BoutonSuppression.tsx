@@ -1,16 +1,28 @@
 import React from "react";
 import { MdDeleteOutline } from "react-icons/md";
-import {BoutonSuppressionProps} from "@/interfaces/BoutonSuppressionProps";
-
+import { BoutonSuppressionProps } from "@/interfaces/BoutonSuppressionProps";
 
 
 const BoutonSuppression = ({ entityId, entityType, onDelete }: BoutonSuppressionProps) => {
     const handleSuppression = async () => {
-        try {
-            const endpoint = entityType === "stock"
-                ? `http://localhost:5141/api/Stocks/${entityId}`
-                : `http://localhost:5141/api/Fournisseur/${entityId}`;
+        let endpoint = "";
 
+        switch (entityType) {
+            case "stock":
+                endpoint = `http://localhost:5141/api/Stocks/${entityId}`;
+                break;
+            case "fournisseur":
+                endpoint = `http://localhost:5141/api/Fournisseurs/${entityId}`;
+                break;
+            case "utilisateur":
+                endpoint = `http://localhost:5141/api/Utiliseurs/${entityId}`;
+                break;
+            default:
+                console.error("Type d'entité non reconnu");
+                return;
+        }
+
+        try {
             const reponse = await fetch(endpoint, {
                 method: 'DELETE',
             });
