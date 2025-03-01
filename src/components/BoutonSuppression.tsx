@@ -15,7 +15,7 @@ const BoutonSuppression = ({ entityId, entityType, onDelete }: BoutonSuppression
                 endpoint = `http://localhost:5141/api/Fournisseurs/${entityId}`;
                 break;
             case "utilisateur":
-                endpoint = `http://localhost:5141/api/Utiliseurs/${entityId}`;
+                endpoint = `http://localhost:5141/api/Utilisateur/${entityId}`;
                 break;
             default:
                 console.error("Type d'entité non reconnu");

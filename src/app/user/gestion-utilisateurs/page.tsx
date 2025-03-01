@@ -15,7 +15,7 @@ export default function GestionUtilisateurs() {
     useEffect(() => {
         const fetchUtilisateurs = async () => {
             try {
-                const response = await fetch("http://localhost:5141/api/Utilisateurs");
+                const response = await fetch("http://localhost:5141/api/Utilisateur");
                 const data = await response.json();
                 if (data.success) {
                     setUtilisateurs(data.data);
@@ -47,7 +47,7 @@ export default function GestionUtilisateurs() {
                                 email={utilisateur.email}
                                 roleId={utilisateur.roleId}
                                 onDelete={handleDeleteUtilisateur}
-                                id={0}
+                                id={utilisateur.id}
                                 telephone={""}
                                 roleNom={""} />
                         ))}

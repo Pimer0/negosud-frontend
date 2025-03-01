@@ -16,7 +16,7 @@ const BouttonModification = ({ entityId, entityType }: BouttonModificationProps)
             router.push(`/user/modification-fournisseur/${entityId}`);
         }
         else if (entityType ==='utilisateur') {
-            router.push(`/user/modification-utilisateur/${entityId}`);
+            router.push(`/user/modification-utilisateurs/${entityId}`);
         }
     };
 
