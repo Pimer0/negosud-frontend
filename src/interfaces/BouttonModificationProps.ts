@@ -1,5 +1,4 @@
-export interface BoutonSuppressionProps {
+export interface BouttonModificationProps {
     entityId: number;
     entityType: "stock" | "fournisseur" | "utilisateur";
-    onDelete: (id: number) => void;
 }

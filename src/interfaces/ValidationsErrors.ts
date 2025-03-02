@@ -12,3 +12,16 @@ export interface ValidationErrors {
         general?: string[];
     };
 }
+
+export interface ValidationErrorsUtilisateurs {
+    errors?: {
+        motDePasse?: string[];
+        prenom?: string[];
+        nom?: string[];
+        email?: string[];
+        tel?: string[];
+        roleId?: string[];
+        role?: string[];
+        general?: string[];
+    };
+}

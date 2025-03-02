@@ -115,3 +115,60 @@ export type AjoutFournisseurFormState =
 }
     | undefined;
 */
+export const AjoutUtilisateurSchema = z.object({
+    email: z
+        .string()
+        .email({ message: 'Veuillez entrer un email valide.' })
+        .trim(),
+    motDePasse: z
+        .string()
+        .min(8, { message: 'Le mot de passe doit contenir au moins 8 caractères.' })
+        .regex(/[a-z]/, { message: 'Le mot de passe doit contenir au moins une lettre minuscule.' })
+        .regex(/[A-Z]/, { message: 'Le mot de passe doit contenir au moins une lettre majuscule.' })
+        .regex(/[0-9]/, { message: 'Le mot de passe doit contenir au moins un chiffre.' })
+        .regex(/[^a-zA-Z0-9]/, {
+            message: 'Le mot de passe doit contenir au moins un caractère spécial.',
+        })
+        .trim(),
+    nom: z
+        .string()
+        .regex(/^[A-Z][a-zÀ-ÖØ-öø-ÿ]+(?:[-' ][A-Z][a-zÀ-ÖØ-öø-ÿ]+)*$/, {
+            message: 'Le nom doit commencer par une majuscule et ne pas contenir de caractères spéciaux ou de chiffres.',
+        })
+        .min(2, { message: 'Le nom doit contenir au moins 2 caractères.' })
+        .max(50, { message: 'Le nom ne peut pas dépasser 50 caractères.' })
+        .trim(),
+    prenom: z
+        .string()
+        .regex(/^[A-Z][a-zÀ-ÖØ-öø-ÿ]+(?:[-' ][A-Z][a-zÀ-ÖØ-öø-ÿ]+)*$/, {
+            message: 'Le prénom doit commencer par une majuscule et ne pas contenir de caractères spéciaux ou de chiffres.',
+        })
+        .min(2, { message: 'Le prénom doit contenir au moins 2 caractères.' })
+        .max(50, { message: 'Le prénom ne peut pas dépasser 50 caractères.' })
+        .trim(),
+    access_token: z
+        .string()
+        .optional(), // Optionnel, car il peut être généré côté serveur
+    roleId: z
+        .number()
+        .int()
+        .min(0, { message: 'L\'ID du rôle doit être un nombre entier positif.' }),
+    role: z
+        .string()
+        .min(1, { message: 'Le rôle est requis.' })
+        .max(50, { message: 'Le rôle ne peut pas dépasser 50 caractères.' }),
+});
+
+export type AjoutUtilisateurFormState =
+    | {
+    errors?: {
+        email?: string[];
+        motDePasse?: string[];
+        nom?: string[];
+        prenom?: string[];
+        roleId?: string[];
+        role?: string[];
+    };
+    message?: string;
+}
+    | undefined;
