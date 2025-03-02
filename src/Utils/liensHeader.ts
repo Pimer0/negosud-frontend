@@ -35,7 +35,7 @@ export const liensHeaderUser = [
         text: 'Commande'
     },
     {
-        pathname: 'user/personel',
+        pathname: '/user/gestion-utilisateurs',
         text: 'Utilisateurs'
     }
 ];

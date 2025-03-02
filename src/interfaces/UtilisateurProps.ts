@@ -5,5 +5,6 @@ export interface UtilisateurProps {
     email: string,
     telephone: string,
     roleId: number,
-    roleNom: string
+    roleNom: string,
+    deleted_at: string
 }

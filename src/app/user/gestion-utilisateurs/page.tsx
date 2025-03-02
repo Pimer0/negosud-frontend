@@ -49,7 +49,8 @@ export default function GestionUtilisateurs() {
                                 onDelete={handleDeleteUtilisateur}
                                 id={utilisateur.id}
                                 telephone={""}
-                                roleNom={""} />
+                                roleNom={""}
+                                deleted_at={utilisateur.deleted_at} />
                         ))}
                     </div>
                     <div className={"flex flex-row justify-center gap-4 mt-8"}>

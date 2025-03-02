@@ -115,23 +115,7 @@ export default function ModificationUtilisateur() {
                         />
                     )}
                 </div>
-                <div className={"flex flex-col"}>
-                    <label htmlFor="motDePasse">Mot de passe</label>
-                    <input
-                        type="password"
-                        name="motDePasse"
-                        id="motDePasse"
-                        value={formData.motDePasse}
-                        onChange={handleChange}
-                        required
-                    />
-                    {errors.errors?.motDePasse && (
-                        <InfoBulle
-                            colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
-                            content={errors.errors?.motDePasse[0]}
-                        />
-                    )}
-                </div>
+
                 <div className={"flex flex-col"}>
                     <label htmlFor="nom">Nom</label>
                     <input
