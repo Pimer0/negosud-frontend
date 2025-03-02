@@ -1,13 +1,34 @@
+'use client'
 import EncartForm from "@/components/EncartForm";
-import {FournisseurProps} from "@/interfaces/FournisseurProps";
-import GestionFournisseur from "@/components/GestionFournisseur";
 import Bouton from "@/components/Bouton";
 import {IoMdAdd} from "react-icons/io";
 import {FaCartPlus} from "react-icons/fa6";
-import React from "react";
+import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
+import {ProduitProps} from "@/interfaces/ProduitProps";
+import {ProduitData} from "@/interfaces/ProduitData";
 
 export default function GestionInventaire() {
+    const [produits, setProduits] = useState<ProduitData[]>([]);
+
+    useEffect(() => {
+        const fetchProduits = async () => {
+            try {
+                const response = await fetch('http://localhost:5141/api/Article');
+                const data = await response.json();
+
+                if (data?.data) {
+                    setProduits(data.data);
+                } else {
+                    console.error("Données invalides reçues :", data);
+                }
+            } catch (error) {
+                console.error('Erreur lors de la récupération des produits:', error);
+            }
+        };
+
+        fetchProduits();
+    }, []);
 
     const router = useRouter();
     return (
@@ -16,18 +37,13 @@ export default function GestionInventaire() {
                 <div>
                     <div className="mb-8">
                         <div className="mb-4 font-bold border-b border-gray-400">
-                            <h3 className="font-extrabold">Fournisseurs</h3>
+                            <h3 className="font-extrabold">Produits</h3>
                         </div>
-                        {fournisseurs.map((fournisseur: FournisseurProps, index) => (
-                            <GestionFournisseur
+                        {produits.map((article: ProduitProps, index) => (
+                            <GestionInventaire
                                 key={index}
-                                fournisseurId={fournisseur.fournisseurId}
-                                nom={fournisseur.nom}
-                                raisonSociale={fournisseur.raisonSociale}
-                                email={fournisseur.email}
-                                tel={fournisseur.tel}
-                                adresse={fournisseur.adresse}
-                                onDelete={handleDeleteFournisseur}
+                                articleId={article.articleId}
+                                libelle={article.libelle}
                             />
                         ))}
                     </div>
@@ -47,7 +63,7 @@ export default function GestionInventaire() {
                         />
                     </div>
                 </div>
-                </EncartForm>
+            </EncartForm>
         </div>
     )
 }

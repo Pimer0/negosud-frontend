@@ -27,7 +27,7 @@ export const liensHeaderUser = [
         text: 'Stock'
     },
     {
-        pathname: 'user/inventaire',
+        pathname: '/user/gestion-inventaire',
         text: 'Inventaire'
     },
     {

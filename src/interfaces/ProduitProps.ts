@@ -3,12 +3,12 @@ import { Famille } from "./Famille";
 
 export interface ProduitProps {
    articleId: number;
-   reference: string;
+   reference?: string;
    libelle: string;
-   famille: Famille;
-   prix: number;
-children: ReactNode;
-img: string;
+   famille?: Famille;
+   prix?: number;
+children?: ReactNode;
+img?: string;
 }
 
 export interface famille {
