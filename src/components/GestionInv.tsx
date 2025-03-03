@@ -1,7 +1,6 @@
 import React, { useState } from 'react';
-import { IoIosAdd, IoIosRemove, IoMdRefresh } from "react-icons/io";
-import { FaHistory } from "react-icons/fa";
-import { useRouter } from "next/navigation";
+import { IoIosAdd, IoIosRemove } from "react-icons/io";
+import InfoBulle from "@/components/infoBulle";
 
 interface GestionStockProps {
     stockId: number;
@@ -11,18 +10,9 @@ interface GestionStockProps {
     seuilMinimum: number;
     reapprovisionnementAuto: boolean;
     onQuantityChange: (stockId: number, newQuantite: number) => void;
-    onViewHistory: (stockId: number) => void;
 }
 
-interface HistoriqueModification {
-    date: string;
-    utilisateur: string;
-    ancienneQuantite: number;
-    nouvelleQuantite: number;
-    typeModification: string;
-}
-
-const GestionInventaire: React.FC<GestionStockProps> = ({
+const GestionInv: React.FC<GestionStockProps> = ({
                                                        stockId,
                                                        articleId,
                                                        libelle,
@@ -30,12 +20,10 @@ const GestionInventaire: React.FC<GestionStockProps> = ({
                                                        seuilMinimum,
                                                        reapprovisionnementAuto,
                                                        onQuantityChange,
-                                                       onViewHistory
                                                    }) => {
     const [quantite, setQuantite] = useState<number>(quantiteActuelle);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const router = useRouter();
 
     const getStockStatusClass = () => {
         if (quantite <= 0) return "text-red-600 font-bold";
@@ -48,7 +36,7 @@ const GestionInventaire: React.FC<GestionStockProps> = ({
         setError(null);
         try {
             const newQuantite = quantite + 1;
-            const response = await fetch(`http://localhost:5141/api/Stock/UpdateQuantity/${stockId}`, {
+            const response = await fetch(`http://localhost:5141/api/Stocks/UpdateStockQuantity/${stockId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -82,7 +70,7 @@ const GestionInventaire: React.FC<GestionStockProps> = ({
             setError(null);
             try {
                 const newQuantite = quantite - 1;
-                const response = await fetch(`http://localhost:5141/api/Stock/UpdateQuantity/${stockId}`, {
+                const response = await fetch(`http://localhost:5141/api/Stocks/UpdateStockQuantity/${stockId}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -108,37 +96,6 @@ const GestionInventaire: React.FC<GestionStockProps> = ({
             } finally {
                 setIsLoading(false);
             }
-        }
-    };
-
-    const handleViewHistory = () => {
-        onViewHistory(stockId);
-    };
-
-    const handleReapprovisionnement = async () => {
-        setIsLoading(true);
-        setError(null);
-        try {
-            const response = await fetch(`http://localhost:5141/api/Stock/Reapprovisionner/${articleId}`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            const data = await response.json();
-            if (data.success) {
-                setError(null);
-                // Afficher un message de succès temporaire
-                alert("Demande de réapprovisionnement envoyée avec succès");
-            } else {
-                setError(data.message || "Erreur lors de la demande de réapprovisionnement");
-            }
-        } catch (error) {
-            setError("Erreur réseau lors de la demande de réapprovisionnement");
-            console.error('Erreur:', error);
-        } finally {
-            setIsLoading(false);
         }
     };
 
@@ -182,28 +139,11 @@ const GestionInventaire: React.FC<GestionStockProps> = ({
                 >
                     <IoIosAdd size={18} />
                 </button>
-
-                <button
-                    onClick={handleViewHistory}
-                    className="p-2 ml-2 bg-blue-100 text-blue-800 rounded-full hover:bg-blue-200"
-                    title="Voir l'historique"
-                >
-                    <FaHistory size={16} />
-                </button>
-
-                <button
-                    onClick={handleReapprovisionnement}
-                    disabled={isLoading}
-                    className="p-2 ml-2 bg-green-100 text-green-800 rounded-full hover:bg-green-200"
-                    title="Demander un réapprovisionnement"
-                >
-                    <IoMdRefresh size={18} />
-                </button>
             </div>
 
-            {error && <div className="col-span-full mt-1 text-red-500 text-sm">{error}</div>}
+            {error && <InfoBulle colorClass="col-span-full mt-1 text-red-500 text-sm" content={error}></InfoBulle>}
         </div>
     );
 };
 
-export default GestionInventaire;
+export default GestionInv;

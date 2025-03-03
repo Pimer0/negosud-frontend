@@ -1,63 +1,107 @@
 'use client'
 import EncartForm from "@/components/EncartForm";
 import Bouton from "@/components/Bouton";
-import {IoMdAdd} from "react-icons/io";
-import {FaCartPlus} from "react-icons/fa6";
-import React, {useEffect, useState} from "react";
-import {useRouter} from "next/navigation";
-import {ProduitProps} from "@/interfaces/ProduitProps";
-import {ProduitData} from "@/interfaces/ProduitData";
+import GestionInv from "@/components/GestionInv";
+import { IoMdAdd } from "react-icons/io";
+import { FaSave } from "react-icons/fa";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import InfoBulle from "@/components/infoBulle";
+
+interface StockData {
+    stockId: number;
+    articleId: number;
+    libelle: string;
+    quantite: number;
+    refLot: string;
+    seuilMinimum: number;
+    reapprovisionnementAuto: boolean;
+}
 
 export default function GestionInventaire() {
-    const [produits, setProduits] = useState<ProduitData[]>([]);
+    const [stocks, setStocks] = useState<StockData[]>([]);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+
+    const router = useRouter();
 
     useEffect(() => {
-        const fetchProduits = async () => {
+        const fetchStocks = async () => {
+            setLoading(true);
             try {
-                const response = await fetch('http://localhost:5141/api/Article');
+                const response = await fetch('http://localhost:5141/api/Stocks');
                 const data = await response.json();
 
-                if (data?.data) {
-                    setProduits(data.data);
+                if (data?.success && data?.data) {
+                    setStocks(data.data);
                 } else {
+                    setError("Impossible de récupérer les données de stock");
                     console.error("Données invalides reçues :", data);
                 }
             } catch (error) {
-                console.error('Erreur lors de la récupération des produits:', error);
+                setError("Erreur de connexion au serveur");
+                console.error('Erreur lors de la récupération des stocks:', error);
+            } finally {
+                setLoading(false);
             }
         };
 
-        fetchProduits();
+        fetchStocks();
     }, []);
 
-    const router = useRouter();
+    const handleQuantityChange = (stockId: number, newQuantite: number) => {
+        setStocks(prevStocks =>
+            prevStocks.map(stock =>
+                stock.stockId === stockId ? { ...stock, quantite: newQuantite } : stock
+            )
+        );
+    };
+
     return (
         <div>
-            <EncartForm titre={"Inventaire"}>
+            <EncartForm titre={"Gestion des Stocks"}>
                 <div>
-                    <div className="mb-8">
-                        <div className="mb-4 font-bold border-b border-gray-400">
-                            <h3 className="font-extrabold">Produits</h3>
+                    {loading ? (
+                        <div className="flex justify-center py-10">
+                            <p>Chargement des stocks...</p>
                         </div>
-                        {produits.map((article: ProduitProps, index) => (
-                            <GestionInventaire
-                                key={index}
-                                articleId={article.articleId}
-                                libelle={article.libelle}
-                            />
-                        ))}
-                    </div>
-                    <div className={"flex flex-row justify-center gap-4 mt-8"}>
+                    ) : error ? (
+                        <InfoBulle colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"} content={error}/>
+                    ) : (
+                        <div className="mb-8">
+                            <div className="mb-4 grid grid-cols-5 font-bold border-b border-gray-400 py-2">
+                                <div>Article</div>
+                                <div className="text-center ">Quantité</div>
+                                <div className="text-center">Seuil min.</div>
+                                <div className="text-center">Réappro.</div>
+                                <div className="text-right">Actions</div>
+                            </div>
+                            {stocks.map((stock) => (
+                                <GestionInv
+                                    key={stock.stockId}
+                                    stockId={stock.stockId}
+                                    articleId={stock.articleId}
+                                    libelle={stock.libelle}
+                                    quantiteActuelle={stock.quantite}
+                                    seuilMinimum={stock.seuilMinimum}
+                                    reapprovisionnementAuto={stock.reapprovisionnementAuto}
+                                    onQuantityChange={handleQuantityChange}
+                                />
+                            ))}
+                        </div>
+                    )}
+
+                    <div className="flex flex-row justify-center gap-4 mt-8">
                         <Bouton
                             text={"Retour"}
-                            childrenIcon={<IoMdAdd size={25}/>}
+
                             colorClass={"bg-[#1E4147] text-white"}
                             hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
                             onClick={() => router.back()}
                         />
                         <Bouton
                             text={"Enregistrer"}
-                            childrenIcon={<FaCartPlus style={{ marginLeft: "1rem" }} size={25} />}
+                            childrenIcon={<FaSave style={{ marginLeft: "1rem" }} size={25} />}
                             colorClass={"bg-[#1E4147] text-white"}
                             hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
                         />
@@ -65,5 +109,5 @@ export default function GestionInventaire() {
                 </div>
             </EncartForm>
         </div>
-    )
+    );
 }
