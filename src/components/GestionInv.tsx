@@ -4,7 +4,7 @@ import InfoBulle from "@/components/infoBulle";
 
 interface GestionStockProps {
     stockId: number;
-    articleId: number;
+    articleReference: string;
     libelle: string;
     quantiteActuelle: number;
     seuilMinimum: number;
@@ -13,21 +13,20 @@ interface GestionStockProps {
 }
 
 const GestionInv: React.FC<GestionStockProps> = ({
-                                                       stockId,
-                                                       articleId,
-                                                       libelle,
-                                                       quantiteActuelle,
-                                                       seuilMinimum,
-                                                       reapprovisionnementAuto,
-                                                       onQuantityChange,
-                                                   }) => {
+                                                     stockId,
+                                                     articleReference,
+                                                     libelle,
+                                                     quantiteActuelle,
+                                                     seuilMinimum,
+                                                     reapprovisionnementAuto,
+                                                     onQuantityChange,
+                                                 }) => {
     const [quantite, setQuantite] = useState<number>(quantiteActuelle);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
 
     const getStockStatusClass = () => {
-        if (quantite <= 0) return "text-red-600 font-bold";
-        if (quantite <= seuilMinimum) return "text-orange-500 font-bold";
+        if (quantite <= seuilMinimum) return "col-span-full mt-1 text-red-500 text-sm";
         return "text-green-600 font-bold";
     };
 
@@ -49,12 +48,11 @@ const GestionInv: React.FC<GestionStockProps> = ({
                 }),
             });
 
-            const data = await response.json();
-            if (data.success) {
+            if (response.ok) {
                 setQuantite(newQuantite);
                 onQuantityChange(stockId, newQuantite);
             } else {
-                setError(data.message || "Erreur lors de la mise à jour");
+                setError(`Erreur ${response.status}: ${response.statusText}`);
             }
         } catch (error) {
             setError("Erreur réseau lors de la mise à jour");
@@ -83,12 +81,11 @@ const GestionInv: React.FC<GestionStockProps> = ({
                     }),
                 });
 
-                const data = await response.json();
-                if (data.success) {
+                if (response.ok) {
                     setQuantite(newQuantite);
                     onQuantityChange(stockId, newQuantite);
                 } else {
-                    setError(data.message || "Erreur lors de la mise à jour");
+                    setError(`Erreur ${response.status}: ${response.statusText}`);
                 }
             } catch (error) {
                 setError("Erreur réseau lors de la mise à jour");
@@ -103,12 +100,12 @@ const GestionInv: React.FC<GestionStockProps> = ({
         <div className="flex items-center justify-between border-b border-gray-200 py-3">
             <div className="flex-1">
                 <p className="font-semibold">{libelle}</p>
-                <p className="text-sm text-gray-600">ID: {articleId}</p>
+                <p className="text-sm text-gray-600">ID: {articleReference}</p>
             </div>
 
             <div className="flex-1 flex justify-center">
                 <div className={getStockStatusClass()}>
-                    {quantite} {quantite <= seuilMinimum && quantite > 0 && "(Bas)"}
+                    {quantite} {quantite <= seuilMinimum && quantite > 0 && (<InfoBulle colorClass="col-span-full mt-1 text-red-500 text-sm" content={"(Bas)"}></InfoBulle>)}
                     {quantite <= 0 && "(Rupture)"}
                 </div>
             </div>
@@ -125,7 +122,7 @@ const GestionInv: React.FC<GestionStockProps> = ({
                 <button
                     onClick={handleDecrement}
                     disabled={isLoading || quantite <= 0}
-                    className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 disabled:opacity-50"
+
                 >
                     <IoIosRemove size={18} />
                 </button>
@@ -135,7 +132,7 @@ const GestionInv: React.FC<GestionStockProps> = ({
                 <button
                     onClick={handleIncrement}
                     disabled={isLoading}
-                    className="p-2 bg-gray-200 rounded-full hover:bg-gray-300 disabled:opacity-50"
+
                 >
                     <IoIosAdd size={18} />
                 </button>

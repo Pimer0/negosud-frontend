@@ -71,7 +71,7 @@ export default function GestionInventaire() {
                         <div className="mb-8">
                             <div className="mb-4 grid grid-cols-5 font-bold border-b border-gray-400 py-2">
                                 <div>Article</div>
-                                <div className="text-center ">Quantité</div>
+                                <div className="text-center ">Statut</div>
                                 <div className="text-center">Seuil min.</div>
                                 <div className="text-center">Réappro.</div>
                                 <div className="text-right">Actions</div>
