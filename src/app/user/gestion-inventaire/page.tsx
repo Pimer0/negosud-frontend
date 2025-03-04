@@ -2,21 +2,11 @@
 import EncartForm from "@/components/EncartForm";
 import Bouton from "@/components/Bouton";
 import GestionInv from "@/components/GestionInv";
-import { IoMdAdd } from "react-icons/io";
-import { FaSave } from "react-icons/fa";
-import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
+import React, {useEffect, useState} from "react";
+import {useRouter} from "next/navigation";
 import InfoBulle from "@/components/infoBulle";
+import {StockData} from "@/interfaces/GestionStockProps";
 
-interface StockData {
-    stockId: number;
-    articleId: number;
-    libelle: string;
-    quantite: number;
-    refLot: string;
-    seuilMinimum: number;
-    reapprovisionnementAuto: boolean;
-}
 
 export default function GestionInventaire() {
     const [stocks, setStocks] = useState<StockData[]>([]);
@@ -52,14 +42,14 @@ export default function GestionInventaire() {
     const handleQuantityChange = (stockId: number, newQuantite: number) => {
         setStocks(prevStocks =>
             prevStocks.map(stock =>
-                stock.stockId === stockId ? { ...stock, quantite: newQuantite } : stock
+                stock.stockId === stockId ? {...stock, quantite: newQuantite} : stock
             )
         );
     };
 
     return (
         <div>
-            <EncartForm titre={"Gestion des Stocks"}>
+            <EncartForm titre={"Gestion des Stocks"} customWidth={"w-[750px]"}>
                 <div>
                     {loading ? (
                         <div className="flex justify-center py-10">
@@ -68,7 +58,7 @@ export default function GestionInventaire() {
                     ) : error ? (
                         <InfoBulle colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"} content={error}/>
                     ) : (
-                        <div className="mb-8">
+                        <div className="mb-8 w-[693px]">
                             <div className="mb-4 grid grid-cols-5 font-bold border-b border-gray-400 py-2">
                                 <div>Article</div>
                                 <div className="text-center ">Statut</div>
@@ -80,7 +70,7 @@ export default function GestionInventaire() {
                                 <GestionInv
                                     key={stock.stockId}
                                     stockId={stock.stockId}
-                                    articleId={stock.articleId}
+                                    articleReference={stock.articleReference}
                                     libelle={stock.libelle}
                                     quantiteActuelle={stock.quantite}
                                     seuilMinimum={stock.seuilMinimum}
@@ -98,12 +88,6 @@ export default function GestionInventaire() {
                             colorClass={"bg-[#1E4147] text-white"}
                             hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
                             onClick={() => router.back()}
-                        />
-                        <Bouton
-                            text={"Enregistrer"}
-                            childrenIcon={<FaSave style={{ marginLeft: "1rem" }} size={25} />}
-                            colorClass={"bg-[#1E4147] text-white"}
-                            hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
                         />
                     </div>
                 </div>

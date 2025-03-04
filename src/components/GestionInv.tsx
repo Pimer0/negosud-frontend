@@ -1,16 +1,7 @@
 import React, { useState } from 'react';
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import InfoBulle from "@/components/infoBulle";
-
-interface GestionStockProps {
-    stockId: number;
-    articleReference: string;
-    libelle: string;
-    quantiteActuelle: number;
-    seuilMinimum: number;
-    reapprovisionnementAuto: boolean;
-    onQuantityChange: (stockId: number, newQuantite: number) => void;
-}
+import {GestionStockProps} from "@/interfaces/GestionStockProps";
 
 const GestionInv: React.FC<GestionStockProps> = ({
                                                      stockId,
@@ -26,8 +17,8 @@ const GestionInv: React.FC<GestionStockProps> = ({
     const [error, setError] = useState<string | null>(null);
 
     const getStockStatusClass = () => {
-        if (quantite <= seuilMinimum) return "col-span-full mt-1 text-red-500 text-sm";
-        return "text-green-600 font-bold";
+        if (quantite <= seuilMinimum) return "bg-[#FECACA] text-[#450A0A] border-[#450A0A]";
+        return "bg-[#DCFCE7] border-[#022C22]";
     };
 
     const handleIncrement = async () => {
@@ -103,12 +94,14 @@ const GestionInv: React.FC<GestionStockProps> = ({
                 <p className="text-sm text-gray-600">ID: {articleReference}</p>
             </div>
 
-            <div className="flex-1 flex justify-center">
-                <div className={getStockStatusClass()}>
-                    {quantite} {quantite <= seuilMinimum && quantite > 0 && (<InfoBulle colorClass="col-span-full mt-1 text-red-500 text-sm" content={"(Bas)"}></InfoBulle>)}
-                    {quantite <= 0 && "(Rupture)"}
-                </div>
-            </div>
+<div className="flex-1 flex justify-center">
+          <InfoBulle colorClass={getStockStatusClass()} content={
+              quantite <= 0 ? "Rupture" :
+              quantite <= seuilMinimum ? "Stock bas" :
+              "Stock bon"
+          }>
+          </InfoBulle>
+      </div>
 
             <div className="flex-1 flex justify-center">
                 <p className="text-gray-600">Seuil min: {seuilMinimum}</p>
