@@ -11,6 +11,16 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next();
     }
 
+    // Vérifier si l'utilisateur a le cookie `CookieCode` pour accéder à /user/login
+    if (pathname === '/user/login') {
+        const hasCookieCode = request.cookies.get('CookieCode')?.value === 'true';
+        if (!hasCookieCode) {
+            // Rediriger vers la page de code si le cookie n'est pas présent
+            return NextResponse.redirect(new URL('/user/code', request.url));
+        }
+        return NextResponse.next();
+    }
+
     const session = request.cookies.get('session')?.value;
     const sessionUser = request.cookies.get('sessionUser')?.value;
 
@@ -26,8 +36,20 @@ export async function middleware(request: NextRequest) {
 
     if (!payload || new Date(payload.exp * 1000) < new Date()) {
         // Rediriger vers la page de connexion si l'utilisateur n'est pas authentifié
-        return NextResponse.redirect(new URL(isAdmin ? '/user/code' : '/client/login', request.url));
+        if (!isAdmin) {
+            return new NextResponse(
+                JSON.stringify({ message: 'Non autorisé' }),
+                {
+                    status: 401,
+                    headers: { 'Content-Type': 'application/json' }
+                }
+            );
+        }
+        // Pour les requêtes de page, rediriger vers la page unauthorized
+        return NextResponse.redirect(new URL('/unauthorized', request.url));
     }
+
+
 
     // Ajouter les informations de l'utilisateur à la requête
     request.headers.set('userId', payload.userId);
