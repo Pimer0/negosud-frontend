@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import InfoBulle from "@/components/infoBulle";
 import {GestionStockProps} from "@/interfaces/GestionStockProps";
+import {getSessionUser} from "@/lib/session";
 
 const GestionInv: React.FC<GestionStockProps> = ({
                                                      stockId,
@@ -15,11 +16,14 @@ const GestionInv: React.FC<GestionStockProps> = ({
     const [quantite, setQuantite] = useState<number>(quantiteActuelle);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const session = await getSessionUser();
+    const userId = session.UserId;
 
     const getStockStatusClass = () => {
         if (quantite <= seuilMinimum) return "bg-[#FECACA] text-[#450A0A] border-[#450A0A]";
         return "bg-[#DCFCE7] border-[#022C22]";
     };
+
 
     const handleIncrement = async () => {
         setIsLoading(true);
@@ -34,7 +38,7 @@ const GestionInv: React.FC<GestionStockProps> = ({
                 body: JSON.stringify({
                     stockId: stockId,
                     nouvelleQuantite: newQuantite,
-                    utilisateurId: 1, // Remplacer par l'ID de l'utilisateur connecté
+                    utilisateurId: userId,
                     typeModification: 'Ajout manuel'
                 }),
             });
