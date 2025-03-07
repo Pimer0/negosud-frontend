@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import InfoBulle from "@/components/infoBulle";
 import {GestionStockProps} from "@/interfaces/GestionStockProps";
+import {getSessionUser} from "@/lib/session";
 
 const GestionInv: React.FC<GestionStockProps> = ({
                                                      stockId,
@@ -15,13 +16,35 @@ const GestionInv: React.FC<GestionStockProps> = ({
     const [quantite, setQuantite] = useState<number>(quantiteActuelle);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string | undefined>(undefined);
+
+    // Utiliser useEffect pour récupérer l'ID de l'utilisateur au chargement du composant
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const session = await getSessionUser();
+                setUserId(session.UserId);
+            } catch (error) {
+                console.error("Erreur lors de la récupération de l'ID utilisateur:", error);
+                setError("Impossible de récupérer l'ID utilisateur");
+            }
+        };
+
+        fetchUserId();
+    }, []);
 
     const getStockStatusClass = () => {
         if (quantite <= seuilMinimum) return "bg-[#FECACA] text-[#450A0A] border-[#450A0A]";
         return "bg-[#DCFCE7] border-[#022C22]";
     };
 
+
     const handleIncrement = async () => {
+        if (!userId) {
+            setError("ID utilisateur non disponible");
+            return;
+        }
+
         setIsLoading(true);
         setError(null);
         try {
@@ -34,7 +57,7 @@ const GestionInv: React.FC<GestionStockProps> = ({
                 body: JSON.stringify({
                     stockId: stockId,
                     nouvelleQuantite: newQuantite,
-                    utilisateurId: 1, // Remplacer par l'ID de l'utilisateur connecté
+                    utilisateurId: userId,
                     typeModification: 'Ajout manuel'
                 }),
             });
@@ -55,6 +78,11 @@ const GestionInv: React.FC<GestionStockProps> = ({
 
     const handleDecrement = async () => {
         if (quantite > 0) {
+            if (!userId) {
+                setError("ID utilisateur non disponible");
+                return;
+            }
+
             setIsLoading(true);
             setError(null);
             try {
@@ -67,7 +95,7 @@ const GestionInv: React.FC<GestionStockProps> = ({
                     body: JSON.stringify({
                         stockId: stockId,
                         nouvelleQuantite: newQuantite,
-                        utilisateurId: 1, // Remplacer par l'ID de l'utilisateur connecté
+                        utilisateurId: userId, // Utiliser l'ID de l'utilisateur récupéré
                         typeModification: 'Retrait manuel'
                     }),
                 });

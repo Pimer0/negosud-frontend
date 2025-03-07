@@ -2,6 +2,7 @@
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import InfoBulle from "@/components/infoBulle";
+import Cookies from 'js-cookie';
 
 export default function Code() {
     const router = useRouter();
@@ -10,6 +11,13 @@ export default function Code() {
 
     const validateCode = (code: string) => {
         if (code === "ilovewine") {
+            // Définir un cookie `CookieCode` valide pendant 7 jours
+            Cookies.set('CookieCode', 'true', {
+                expires: 7,
+                secure: true,
+                sameSite: 'lax',
+                path: '/',
+            });
             router.push("/user/login");
         } else {
             setError("Mauvais code, réessayez");
