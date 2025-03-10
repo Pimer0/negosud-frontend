@@ -76,7 +76,7 @@ export default function ModificationFournisseur() {
             if (response.ok) {
                 setSuccess(true);
                 console.log("Fournisseur modifié avec succès");
-                router.push("/user/gestion-stocks-fouirnisseurs")
+                router.push("/user/gestion-stocks-fournisseurs")
             } else {
                 console.error("Erreur lors de la modification");
             }
@@ -166,6 +166,7 @@ export default function ModificationFournisseur() {
                         colorClass={"bg-[#1E4147] text-white"}
                         hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
                         customType={"submit"}
+
                     />
                 </div>
             </form>
