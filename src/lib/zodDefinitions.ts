@@ -159,6 +159,7 @@ export const AjoutUtilisateurSchema = z.object({
         .max(50, { message: 'Le rôle ne peut pas dépasser 50 caractères.' }),
 });
 
+/*
 export type AjoutUtilisateurFormState =
     | {
     errors?: {
@@ -171,4 +172,4 @@ export type AjoutUtilisateurFormState =
     };
     message?: string;
 }
-    | undefined;
+    | undefined;*/

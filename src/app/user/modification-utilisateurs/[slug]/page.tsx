@@ -6,24 +6,24 @@ import React, { useState, useEffect } from "react";
 import { useRouter, useParams } from 'next/navigation';
 import EncartForm from "@/components/EncartForm";
 import { ValidationErrorsUtilisateurs} from "@/interfaces/ValidationsErrors";
-import { AjoutUtilisateurSchema } from "@/lib/zodDefinitions"; // Importez le schéma de validation
+
 
 export default function ModificationUtilisateur() {
     const router = useRouter();
-    const params = useParams(); // Récupère les paramètres dynamiques
-    const [errors, setErrors] = useState<ValidationErrorsUtilisateurs>({});
+    const params = useParams();
+    const [errors, /*setErrors*/] = useState<ValidationErrorsUtilisateurs>({});
     const [success, setSuccess] = useState(false);
+    const [isLoading, setIsLoading] = useState(true);
     const [formData, setFormData] = useState({
         utilisateurId: 0,
         email: '',
-        motDePasse: '',
         nom: '',
         prenom: '',
         roleId: 0,
         role: '',
     });
 
-    // Récupérer l'ID de l'utilisateur depuis les paramètres de l'URL
+
     useEffect(() => {
         if (params.slug) {
             const utilisateurId = parseInt(params.slug as string, 10);
@@ -32,23 +32,26 @@ export default function ModificationUtilisateur() {
                 utilisateurId,
             }));
 
-            // Charger les données de l'utilisateur
+
             const fetchUtilisateur = async () => {
+                setIsLoading(true);
                 try {
                     const response = await fetch(`http://localhost:5141/api/Utilisateur/${utilisateurId}`);
                     const data = await response.json();
                     if (data.success) {
                         setFormData(prevState => ({
                             ...prevState,
-                            email: data.data.email,
-                            nom: data.data.nom,
-                            prenom: data.data.prenom,
-                            roleId: data.data.roleId,
-                            role: data.data.role,
+                            email: data.data.email || '',
+                            nom: data.data.nom || '',
+                            prenom: data.data.prenom || '',
+                            roleId: data.data.roleId || 0,
+                            role: data.data.role || '',
                         }));
                     }
                 } catch (error) {
                     console.error("Erreur lors de la récupération des données de l'utilisateur", error);
+                } finally {
+                    setIsLoading(false);
                 }
             };
 
@@ -67,12 +70,12 @@ export default function ModificationUtilisateur() {
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
 
-        // Validation des données avec Zod
-        const result = AjoutUtilisateurSchema.safeParse(formData);
-        if (!result.success) {
-            setErrors({ errors: result.error.flatten().fieldErrors });
-            return;
-        }
+        /*        // Validation des données avec Zod
+                const result = AjoutUtilisateurSchema.safeParse(formData);
+                if (!result.success) {
+                    setErrors({ errors: result.error.flatten().fieldErrors });
+                    return;
+                }*/
 
         try {
             const response = await fetch(`http://localhost:5141/api/Utilisateur/${formData.utilisateurId}`, {
@@ -94,6 +97,15 @@ export default function ModificationUtilisateur() {
             console.error("Erreur lors de la modification", error);
         }
     };
+
+    // Ne pas afficher le formulaire pendant le chargement
+    if (isLoading) {
+        return (
+            <EncartForm titre={"Modifiez un utilisateur"}>
+                <div>Chargement des données...</div>
+            </EncartForm>
+        );
+    }
 
     return (
         <EncartForm titre={"Modifiez un utilisateur"}>
