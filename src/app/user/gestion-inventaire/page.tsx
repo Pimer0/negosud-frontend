@@ -23,7 +23,8 @@ export default function GestionInventaire() {
                 const data = await response.json();
 
                 if (data?.success && data?.data) {
-                    setStocks(data.data);
+                    const sortedStocks = [...data.data].sort((a, b) => a.quantite - b.quantite);
+                    setStocks(sortedStocks);
                 } else {
                     setError("Impossible de récupérer les données de stock");
                     console.error("Données invalides reçues :", data);
@@ -40,11 +41,13 @@ export default function GestionInventaire() {
     }, []);
 
     const handleQuantityChange = (stockId: number, newQuantite: number) => {
-        setStocks(prevStocks =>
-            prevStocks.map(stock =>
+        setStocks(prevStocks => {
+            const updatedStocks = prevStocks.map(stock =>
                 stock.stockId === stockId ? {...stock, quantite: newQuantite} : stock
-            )
-        );
+            );
+
+            return [...updatedStocks].sort((a, b) => a.quantite - b.quantite);
+        });
     };
 
     return (
@@ -84,7 +87,6 @@ export default function GestionInventaire() {
                     <div className="flex flex-row justify-center gap-4 mt-8">
                         <Bouton
                             text={"Retour"}
-
                             colorClass={"bg-[#1E4147] text-white"}
                             hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
                             onClick={() => router.back()}
