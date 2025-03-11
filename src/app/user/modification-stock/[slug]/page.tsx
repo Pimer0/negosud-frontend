@@ -36,6 +36,7 @@ export default function ModificationStock() {
                     if (response.ok) {
                         setFormData(prevState => ({
                             ...prevState,
+                            stockId: stockId,
                             quantite: data.quantite,
                             refLot: data.refLot,
                             seuilMinimum: data.seuilMinimum,
@@ -66,7 +67,7 @@ export default function ModificationStock() {
 
         try {
             const response = await fetch(`http://localhost:5141/api/Stocks/${formData.stockId}`, {
-                method: 'PUT',
+                method: 'PATCH',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -76,7 +77,7 @@ export default function ModificationStock() {
             if (response.ok) {
                 setSuccess(true);
                 console.log("Stock modifié avec succès");
-                router.push("/user/gestion-stocks-fouirnisseurs");
+                router.push("/user/gestion-stocks-fournisseurs");
             } else {
                 console.error("Erreur lors de la modification");
             }
