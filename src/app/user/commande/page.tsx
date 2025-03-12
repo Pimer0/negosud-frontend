@@ -289,7 +289,7 @@ export default function CommandeFournisseur() {
   };
 
   const handleCommandeUpdated = () => {
-    // Recharger la liste des commandes après une mise à jour
+    // recharge la liste des commandes après une mise à jour
     if (activeTab === 'gestion') {
       const fetchCommandes = async () => {
         try {
@@ -322,7 +322,8 @@ export default function CommandeFournisseur() {
   };
 
   return (
-    <div className="grid grid-cols-12 -mt-16 -mb-16">
+    
+    <div className="grid grid-cols-12 -mt-4 -mb-20">
       <div className="col-span-12 px-4 sm:col-span-12 sm:col-start-1 md:col-span-10 md:col-start-2 lg:col-span-10 lg:col-start-2 xl:col-span-8 xl:col-start-3">
         <EncartForm titre="Gestion des commandes fournisseurs" customWidth="w-full">
           <div className="w-full">
@@ -598,7 +599,7 @@ export default function CommandeFournisseur() {
           </div>
         </EncartForm>
       </div>
-      c
+      
       <EditCommandeModal
         isOpen={isEditModalOpen}
         onClose={closeEditModal}
