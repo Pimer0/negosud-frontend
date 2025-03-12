@@ -171,7 +171,7 @@ export async function createSessionUser(response: ResponseDataUser) {
 export async function getSessionUser() {
     const cookieStore = await cookies();
     return {
-        token: cookieStore.get('token')?.value,
+        token: cookieStore.get('sessionUser')?.value,
         UserId: cookieStore.get('UserId')?.value
     };
 }
