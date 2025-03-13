@@ -3,7 +3,7 @@ import React, {useEffect, useState} from 'react';
 import Produit from "@/components/Produit";
 import GestionCartShop from "@/components/GestionCartShop";
 import {ProduitData} from "@/interfaces/ProduitData";
-import {Famille} from "@/interfaces/Famille"; // Importez l'interface Famille
+import {Famille} from "@/interfaces/Famille";
 
 export default function Shop() {
     const [produits, setProduits] = useState<ProduitData[]>([]);
@@ -28,7 +28,7 @@ export default function Shop() {
     }, []);
 
     const handleImg = (famille: Famille | null) => {
-        const familleNom = famille?.nom?.toLowerCase(); // Accédez à la propriété `nom` de l'objet `famille` et convertissez en minuscules
+        const familleNom = famille?.nom?.toLowerCase();
 
         switch (familleNom) {
             case "rouge":
@@ -38,7 +38,7 @@ export default function Shop() {
             case "rosé":
                 return "/rose.png";
             default:
-                return "/default.png"; // Image par défaut si la famille est inconnue
+                return "/default.png";
         }
     };
 

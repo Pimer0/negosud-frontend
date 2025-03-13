@@ -31,7 +31,7 @@ export const liensHeaderUser = [
         text: 'Inventaire'
     },
     {
-        pathname: 'user/commande',
+        pathname: '/user/commande',
         text: 'Commande'
     },
     {

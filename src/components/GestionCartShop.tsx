@@ -9,13 +9,13 @@ const GestionCartShop: React.FC<GestionCartShopProps> = ({
     ligneCommandeId
 }) => {
     const { quantite, setQuantite, updatePanierVirtuel, error, isLoading } = usePanier(articleId, initialQuantite);
-    const { updatePanier } = usePanierContext(); // Utilisation du contexte
+    const { updatePanier } = usePanierContext();
 
     const handleIncrement = async () => {
         const newQuantite = quantite + 1;
         setQuantite(newQuantite);
         await updatePanierVirtuel(newQuantite, ligneCommandeId);
-        updatePanier(); // Met à jour le contexte après modification
+        updatePanier();
     };
 
     const handleDecrement = async () => {
@@ -23,7 +23,7 @@ const GestionCartShop: React.FC<GestionCartShopProps> = ({
             const newQuantite = quantite - 1;
             setQuantite(newQuantite);
             await updatePanierVirtuel(newQuantite, ligneCommandeId);
-            updatePanier(); // Met à jour le contexte après modification
+            updatePanier();
         }
     };
 

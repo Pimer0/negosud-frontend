@@ -14,8 +14,8 @@ export default function UnauthorizedPage() {
                 </p>
                 <div className="flex justify-center">
                     <Bouton
-text={"Connexion"}
-onClick={() => router.push("/user/code")}
+                        text={"Connexion"}
+                        onClick={() => router.push("/user/code")}
                     />
                 </div>
             </div>

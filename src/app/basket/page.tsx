@@ -57,11 +57,11 @@ export default function Basket() {
         calculateTotalPrice();
     }, [panier]);
 
-    // Fonction de mise à jour appelée lorsque la quantité change
+    // fonction de mise à jour appelée lorsque la quantité change
     const handleQuantityChange = (articleId: number, newQuantite: number) => {
         setPanier(prevPanier => {
             if (!prevPanier?.ligneCommandes || !Array.isArray(prevPanier.ligneCommandes)) {
-                return prevPanier; // Retourner l'état actuel si ligneCommandes n'existe pas ou n'est pas un tableau
+                return prevPanier; // retourne l'état actuel si ligneCommandes n'existe pas ou n'est pas un tableau
             }
 
             const updatedPanier = {
@@ -104,8 +104,8 @@ export default function Basket() {
 
         const amount = totalPrice * 100; // stripe utilise des centimes...
         const currency = "eur";
-        const successUrl = "http://localhost:3000/success"; // URL de redirection en cas de succès //TODO : à déterminer
-        const cancelUrl = "http://localhost:3000/basket"; // URL de redirection si paiement annuler //TODO
+        const successUrl = "http://localhost:3000/success"; // URL de redirection en cas de succès 
+        const cancelUrl = "http://localhost:3000/basket"; // URL de redirection si paiement annuler
 
         try {
             const response = await fetch("http://localhost:5141/api/Stripe/create-checkout-session", {
