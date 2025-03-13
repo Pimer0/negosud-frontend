@@ -1,9 +1,9 @@
 'use server'
 
 import 'server-only'
-import { importSPKI, SignJWT, jwtVerify } from 'jose'
-import { SessionPayload } from '@/interfaces/SessionPayload';
-import { cookies } from 'next/headers'
+import {importSPKI, jwtVerify, SignJWT} from 'jose'
+import {SessionPayload} from '@/interfaces/SessionPayload';
+import {cookies} from 'next/headers'
 import {ResponseData, ResponseDataUser} from '@/interfaces/ResponseData'
 
 
@@ -188,4 +188,15 @@ export async function logoutUser() {
     const cookieStore = await cookies();
     cookieStore.delete('UserId');
     cookieStore.delete('sessionUser')
+}
+
+export async function getUserId() {
+    const cookieStore =  await cookies();
+    const userId = cookieStore.get('UserId')?.value;
+    return userId || "1";
+}
+
+export async function getAuthToken() {
+    const cookieStore = await cookies();
+    return cookieStore.get('sessionUser')?.value;
 }
