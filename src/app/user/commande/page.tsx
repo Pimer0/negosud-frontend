@@ -6,15 +6,10 @@ import Bouton from "@/components/Bouton";
 import { FaPlus, FaTrash, FaClipboardList, FaEdit } from "react-icons/fa";
 import { barlowCondensed } from "@/app/fonts";
 import { getSessionUser } from "@/lib/session";
-import EditCommandeModal from "@/components/EditCommandeModal"; // Importez le composant modal
+import EditCommandeModal from "@/components/EditCommandeModal";
+import { Fournisseur } from "@/interfaces/Fournisseur";
 
-interface Fournisseur {
-  fournisseurId: number;
-  nom: string;
-  raisonSociale: string;
-  email: string;
-  tel: string;
-}
+
 
 interface Article {
   articleId: number;

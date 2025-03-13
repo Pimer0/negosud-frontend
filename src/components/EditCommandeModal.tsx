@@ -5,35 +5,8 @@ import { FaPlus, FaTrash, FaTimes } from "react-icons/fa";
 import { barlowCondensed } from "@/app/fonts";
 import Bouton from "@/components/Bouton";
 import { getSessionUser } from "@/lib/session";
-
-interface Article {
-  articleId: number;
-  libelle: string;
-  reference: string;
-  prix: number;
-}
-
-interface LigneBonCommande {
-  ligneBonCommandeId: number;
-  articleId: number;
-  article: Article;
-  quantite: number;
-  prixUnitaire: number;
-  livree: boolean;
-}
-
-interface BonCommandeDetail {
-  bonCommandeId: number;
-  reference: string;
-  status: string;
-  prix: number;
-  dateCreation: string;
-  fournisseur: {
-    fournisseurId: number;
-    nom: string;
-  };
-  ligneBonCommandes: LigneBonCommande[];
-}
+import { BonCommandeDetail } from "@/interfaces/BonCommandeDetail";
+import { LigneBonCommande } from "@/interfaces/LigneBonCommande";
 
 interface EditCommandeModalProps {
   isOpen: boolean;
@@ -167,17 +140,55 @@ export default function EditCommandeModal({
     });
   };
 
-
-  const deleteLine = (index: number) => {
+  // supprimer une ligne
+  const deleteLine = async (index: number, ligneBonCommandeId: number) => {
     if (!commande) return;
     
-    const updatedLines = [...commande.ligneBonCommandes];
-    updatedLines.splice(index, 1);
-    
-    setCommande({
-      ...commande,
-      ligneBonCommandes: updatedLines
-    });
+    try {
+      // Si c'est une nouvelle ligne (ID ≤ 0), on la supprime juste du state
+      if (ligneBonCommandeId <= 0) {
+        const updatedLines = [...commande.ligneBonCommandes];
+        updatedLines.splice(index, 1);
+        
+        setCommande({
+          ...commande,
+          ligneBonCommandes: updatedLines
+        });
+        return;
+      }
+      
+      // Si c'est une ligne existante, on appelle l'API de suppression
+      setLoading(true);
+      const session = await getSessionUser();
+      
+      const response = await fetch(`http://localhost:5141/api/BonCommande/delete/ligne-commande/${ligneBonCommandeId}`, {
+        method: 'DELETE',
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${session.token}`
+        }
+      });
+      
+      const result = await response.json();
+      
+      if (result.success) {
+        // Suppression réussie, mettre à jour l'état local
+        const updatedLines = [...commande.ligneBonCommandes];
+        updatedLines.splice(index, 1);
+        
+        setCommande({
+          ...commande,
+          ligneBonCommandes: updatedLines
+        });
+      } else {
+        setError('Erreur lors de la suppression de la ligne: ' + result.message);
+      }
+    } catch (error) {
+      setError('Erreur de connexion au serveur');
+      console.error('Erreur:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   // mise à jour de l'article d'une ligne
@@ -209,6 +220,7 @@ export default function EditCommandeModal({
       .toFixed(2);
   };
 
+  // enregistrer les modifications
   const saveChanges = async () => {
     if (!commande) return;
     
@@ -216,21 +228,18 @@ export default function EditCommandeModal({
       setLoading(true);
       const session = await getSessionUser();
       
+      // Préparer le payload en n'incluant que les champs nécessaires
       const payload = {
-        bonCommandeId: commande.bonCommandeId,
         status: status,
-        prix: parseFloat(calculateTotalPrice()),
-        fournisseurID: commande.fournisseur.fournisseurId,
-        ligneBonCommandes: commande.ligneBonCommandes.map(line => ({
+        ligneCommandes: commande.ligneBonCommandes.map(line => ({
           ligneBonCommandeId: line.ligneBonCommandeId,
           articleId: line.articleId,
           quantite: line.quantite,
-          prixUnitaire: line.prixUnitaire,
           livree: line.livree
         }))
       };
       
-      const response = await fetch(`http://localhost:5141/api/BonCommande/update`, {
+      const response = await fetch(`http://localhost:5141/api/BonCommande/update/${commande.bonCommandeId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -403,9 +412,10 @@ export default function EditCommandeModal({
                           </td>
                           <td className="p-2 text-center">
                             <button
-                              onClick={() => deleteLine(index)}
+                              onClick={() => deleteLine(index, line.ligneBonCommandeId)}
                               className="text-custom-dark hover:text-red-500 transition-colors"
                               title="Supprimer"
+                              disabled={loading}
                             >
                               <FaTrash />
                             </button>
