@@ -175,8 +175,9 @@ export default function CommandeFournisseur() {
     try {
       setLoading(true);
       // Récupérer l'ID de l'utilisateur depuis les cookies
-      const userId = getCookie('UserId') || "1";
-      
+      const userCookie = await getCookie('UserId');
+      const userId = userCookie?.value || "1";
+
       const payload = {
         prix: parseFloat(calculateTotalPrice()),
         utilisateurId: parseInt(userId), // Utilisation de l'ID de l'utilisateur connecté depuis les cookies
@@ -232,7 +233,7 @@ export default function CommandeFournisseur() {
 
   return (
     <div className="min-h-screen flex flex-col">
-      <HeaderUser existingSessionUser={{ name: 'session', value: 'true' } as any} />
+     <HeaderUser existingSessionUser={{ name: 'session', value: 'true' }} />
 
       <EncartForm titre="Passez commande aux fournisseurs" customWidth="w-full md:w-3/4 lg:w-2/3">
         <div className="w-full">

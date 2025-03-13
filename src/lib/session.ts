@@ -6,6 +6,7 @@ import { SessionPayload } from '@/interfaces/SessionPayload';
 import { cookies } from 'next/headers'
 import {ResponseData, ResponseDataUser} from '@/interfaces/ResponseData'
 
+
 async function getPublicKey() {
     const response = await fetch('http://localhost:5141/api/Jwt/public-key');
     const publicKeyBase64 = await response.text();
@@ -43,10 +44,17 @@ export async function decrypt(session: string | undefined = '') {
             algorithms: ['RS256'],
         });
 
+
+        if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+            await deleteSession();
+            return null;
+        }
+
         return payload;
     } catch (error) {
         console.error('Erreur de déchiffrement:', error);
-        throw error;
+        await deleteSession();
+        return null;
     }
 }
 
@@ -180,4 +188,4 @@ export async function logoutUser() {
     const cookieStore = await cookies();
     cookieStore.delete('UserId');
     cookieStore.delete('sessionUser')
-};
+}

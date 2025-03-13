@@ -1,9 +1,12 @@
+import React from "react";
+
 export interface BoutonProps {
-    text: string;
-    colorClass?: string;
-    hoverColorClass?: string;
-    widthClass?: string;
-    onClick?: () => void;
-    childrenIcon?: React.ReactNode;
-    customType?: "submit" | "reset" | "button" | undefined
+    text: string,
+    colorClass?: string,
+    hoverColorClass?: string,
+    widthClass?: string,
+    onClick?: () => void,
+    childrenIcon?: React.ReactNode,
+    customType?: "submit" | "reset" | "button" | undefined,
+    disabled?: boolean
 }
