@@ -59,7 +59,7 @@ export default function GestionUtilisateurs() {
                             childrenIcon={<IoMdAdd size={25} />}
                             colorClass={"bg-[#1E4147] text-white"}
                             hoverColorClass={"hover:bg-white hover:text-[#1E4147]"}
-                            onClick={() => router.push("/user/ajout-utilisateurs")}
+                            onClick={() => router.push("/user/ajout-utilisateur")}
                         />
                         <Bouton
                             text={"Retour"}
