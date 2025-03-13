@@ -16,7 +16,7 @@ export default function ButtonDeconnexion() {
         e.preventDefault();
 
         try {
-            if (existingSessionUser?.UserId) {
+            if (existingSessionUser?.UserId ) {
                 await logoutUser();
             } else {
                 await logoutClient();

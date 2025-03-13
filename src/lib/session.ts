@@ -1,10 +1,11 @@
 'use server'
 
 import 'server-only'
-import { importSPKI, SignJWT, jwtVerify } from 'jose'
-import { SessionPayload } from '@/interfaces/SessionPayload';
-import { cookies } from 'next/headers'
+import {importSPKI, jwtVerify, SignJWT} from 'jose'
+import {SessionPayload} from '@/interfaces/SessionPayload';
+import {cookies} from 'next/headers'
 import {ResponseData, ResponseDataUser} from '@/interfaces/ResponseData'
+
 
 async function getPublicKey() {
     const response = await fetch('http://localhost:5141/api/Jwt/public-key');
@@ -43,10 +44,17 @@ export async function decrypt(session: string | undefined = '') {
             algorithms: ['RS256'],
         });
 
+
+        if (payload.exp && payload.exp < Math.floor(Date.now() / 1000)) {
+            await deleteSession();
+            return null;
+        }
+
         return payload;
     } catch (error) {
         console.error('Erreur de déchiffrement:', error);
-        throw error;
+        await deleteSession();
+        return null;
     }
 }
 
@@ -180,4 +188,15 @@ export async function logoutUser() {
     const cookieStore = await cookies();
     cookieStore.delete('UserId');
     cookieStore.delete('sessionUser')
-};
+}
+
+export async function getUserId() {
+    const cookieStore =  await cookies();
+    const userId = cookieStore.get('UserId')?.value;
+    return userId || "1";
+}
+
+export async function getAuthToken() {
+    const cookieStore = await cookies();
+    return cookieStore.get('sessionUser')?.value;
+}

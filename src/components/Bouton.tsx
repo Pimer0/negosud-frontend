@@ -8,7 +8,8 @@ const Bouton: React.FC<BoutonProps> = ({
                                            widthClass = "w-fit",
                                            onClick,
                                            childrenIcon,
-                                           customType
+                                           customType,
+                                           /*disabled*/
                                        }) => {
     return (
         <button
