@@ -207,7 +207,6 @@ export default function CommandeFournisseur() {
       const result = await createCommande(payload);
 
       if (result.success) {
-        alert("Commande passée avec succès !");
         setOrderLines([]);
       } else {
         setError('Erreur lors de la création de la commande: ' + result.message);
