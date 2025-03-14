@@ -4,9 +4,11 @@ import { useState, useEffect } from "react";
 import { FaPlus, FaTrash, FaTimes } from "react-icons/fa";
 import { barlowCondensed } from "@/app/fonts";
 import Bouton from "@/components/Bouton";
-import { getSessionUser } from "@/lib/session";
-import { BonCommandeDetail } from "@/interfaces/BonCommandeDetail";
+import { BonCommandeDetail } from "@/interfaces/BonCommande";
 import { LigneBonCommande } from "@/interfaces/LigneBonCommande";
+import { updateBonCommande } from "@/app/user/commande/update";
+import { deleteCommandeLine } from "@/app/user/commande/delete";
+import { fetchCommandeById, fetchAllArticlesByFournisseur } from "@/app/user/commande/fetch";
 
 interface EditCommandeModalProps {
   isOpen: boolean;
@@ -36,23 +38,13 @@ export default function EditCommandeModal({
 
       try {
         setLoading(true);
-        const session = await getSessionUser();
         
-        const response = await fetch(`http://localhost:5141/api/BonCommande/${commandeId}`, {
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${session.token}`
-          }
-        });
-        
-        const result = await response.json();
+        const result = await fetchCommandeById(commandeId);
         
         if (result.success) {
           setCommande(result.data);
-          // S'assurer que status n'est jamais undefined ou null
           setStatus(result.data.status || "En attente");
           
-          // récupérat les articles du fournisseur
           fetchArticlesByFournisseur(result.data.fournisseur.fournisseurId);
         } else {
           setError('Erreur lors de la récupération des détails de la commande: ' + result.message);
@@ -80,8 +72,8 @@ export default function EditCommandeModal({
   // récupère les articles du fournisseur
   const fetchArticlesByFournisseur = async (fournisseurId: number) => {
     try {
-      const response = await fetch(`http://localhost:5141/api/Article/fournisseur/${fournisseurId}`);
-      const result = await response.json();
+
+      const result = await fetchAllArticlesByFournisseur(fournisseurId);
       
       if (result.success) {
         setArticles(result.data);
@@ -145,7 +137,7 @@ export default function EditCommandeModal({
     if (!commande) return;
     
     try {
-      // Si c'est une nouvelle ligne (ID ≤ 0), on la supprime juste du state
+      // si c'est une nouvelle ligne (ID ≤ 0), on la supprime juste du state
       if (ligneBonCommandeId <= 0) {
         const updatedLines = [...commande.ligneBonCommandes];
         updatedLines.splice(index, 1);
@@ -157,22 +149,11 @@ export default function EditCommandeModal({
         return;
       }
       
-      // Si c'est une ligne existante, on appelle l'API de suppression
       setLoading(true);
-      const session = await getSessionUser();
       
-      const response = await fetch(`http://localhost:5141/api/BonCommande/delete/ligne-commande/${ligneBonCommandeId}`, {
-        method: 'DELETE',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.token}`
-        }
-      });
-      
-      const result = await response.json();
+      const result = await deleteCommandeLine(ligneBonCommandeId);
       
       if (result.success) {
-        // Suppression réussie, mettre à jour l'état local
         const updatedLines = [...commande.ligneBonCommandes];
         updatedLines.splice(index, 1);
         
@@ -226,9 +207,8 @@ export default function EditCommandeModal({
     
     try {
       setLoading(true);
-      const session = await getSessionUser();
       
-      // Préparer le payload en n'incluant que les champs nécessaires
+      // préparer le payload en n'incluant que les champs nécessaires
       const payload = {
         status: status,
         ligneCommandes: commande.ligneBonCommandes.map(line => ({
@@ -239,17 +219,8 @@ export default function EditCommandeModal({
         }))
       };
       
-      const response = await fetch(`http://localhost:5141/api/BonCommande/update/${commande.bonCommandeId}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${session.token}`
-        },
-        body: JSON.stringify(payload)
-      });
-      
-      const result = await response.json();
-      
+      const result = await updateBonCommande(commande.bonCommandeId, payload);
+    
       if (result.success) {
         onCommandeUpdated();
         onClose();
