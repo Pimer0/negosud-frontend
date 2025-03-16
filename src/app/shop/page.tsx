@@ -8,8 +8,12 @@ import SearchBar from "@/components/SearchBar";
 
 export default function Shop() {
     const [produits, setProduits] = useState<ProduitData[]>([]);
-    const [filteredProduits, setFilteredProduits] = useState<ProduitData[]>([]);
-    const [searchActive, setSearchActive] = useState(false);
+    const [, setFilteredProduits] = useState<ProduitData[]>([]);
+    const [displayedProduits, setDisplayedProduits] = useState<ProduitData[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
+    const [selectedFamille, setSelectedFamille] = useState<string>('');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+    const [sortType, setSortType] = useState<'default' | 'prix'>('default');
 
     useEffect(() => {
         const fetchProduits = async () => {
@@ -19,7 +23,8 @@ export default function Shop() {
 
                 if (data?.data) {
                     setProduits(data.data);
-                    setFilteredProduits(data.data); // Initialiser avec tous les produits
+                    setFilteredProduits(data.data);
+                    setDisplayedProduits(data.data);
                 } else {
                     console.error("Données invalides reçues :", data);
                 }
@@ -30,6 +35,12 @@ export default function Shop() {
 
         fetchProduits();
     }, []);
+
+    useEffect(() => {
+
+        applyFiltersAndSort();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedFamille, sortType, sortOrder, searchQuery, produits]);
 
     const handleImg = (famille: Famille | null) => {
         const familleNom = famille?.nom?.toLowerCase();
@@ -47,37 +58,117 @@ export default function Shop() {
     };
 
     const handleSearch = (query: string) => {
-        if (query === '') {
-            // Si la requête est vide, réafficher tous les produits
-            setFilteredProduits(produits);
-            setSearchActive(false);
-        } else {
-            // Sinon, filtrer les produits selon la requête
-            const filtered = produits.filter((produit) =>
-                produit.libelle.toLowerCase().includes(query.toLowerCase()) ||
-                produit.reference.toLowerCase().includes(query.toLowerCase())
-            );
-            setFilteredProduits(filtered);
-            setSearchActive(true);
-        }
+        setSearchQuery(query);
     };
 
-    // Détermine les produits à afficher
-    const produitsToDisplay = searchActive ? filteredProduits : produits;
+    const handleFamilleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedFamille(e.target.value);
+    };
+
+    const applyFiltersAndSort = () => {
+
+        let result = [...produits];
+
+        if (searchQuery) {
+            result = result.filter((produit) =>
+                produit.libelle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                produit.reference.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
+
+
+        if (selectedFamille) {
+            result = result.filter(produit =>
+                produit.famille?.nom?.toLowerCase() === selectedFamille.toLowerCase()
+            );
+        }
+
+
+        if (sortType === 'prix') {
+            result.sort((a, b) => {
+                return sortOrder === 'asc'
+                    ? a.prix - b.prix
+                    : b.prix - a.prix;
+            });
+        }
+
+
+        setFilteredProduits(result);
+        setDisplayedProduits(result);
+    };
+
+    const toggleSortOrder = () => {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    };
+
+    const resetFilters = () => {
+        setSelectedFamille('');
+        setSortType('default');
+        setSortOrder('asc');
+        setSearchQuery('');
+        setFilteredProduits(produits);
+        setDisplayedProduits(produits);
+    };
 
     return (
-        <div className="grid grid-rows-[auto_auto_auto_1fr] items-center justify-items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+        <div className="grid grid-rows-[auto_auto_auto_auto_1fr] items-center justify-items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
             <h1 className="text-3xl font-bold mb-2">Boutique</h1>
             <h2 className="text-xl">Cherchez un produit:</h2>
             <SearchBar onSearch={handleSearch}/>
 
-            {searchActive && filteredProduits.length === 0 ? (
+
+            <div className="flex flex-wrap gap-4 w-full justify-center">
+
+                <div className="flex items-center">
+                    <label htmlFor="famille-select" className="mr-2 font-medium">Famille:</label>
+                    <select
+                        id="famille-select"
+                        value={selectedFamille}
+                        onChange={handleFamilleChange}
+                        className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">Toutes</option>
+                        <option value="blanc">Blanc</option>
+                        <option value="rouge">Rouge</option>
+                        <option value="rosé">Rosé</option>
+                    </select>
+                </div>
+
+
+                <button
+                    onClick={() => {
+                        if (sortType === 'prix') {
+                            toggleSortOrder();
+                        } else {
+                            setSortType('prix');
+                            setSortOrder('asc');
+                        }
+                    }}
+                    className={`px-4 py-2 rounded font-medium ${
+                        sortType === 'prix' ? 'bg-[#1E4147] text-white' : 'bg-white text-[#1E4147]'
+                    }`}
+                >
+                    Trier par Prix {sortType === 'prix' && (sortOrder === 'asc' ? '↑' : '↓')}
+                </button>
+
+
+                {(sortType !== 'default' || selectedFamille || searchQuery) && (
+                    <button
+                        onClick={resetFilters}
+                        className="px-4 py-2 rounded bg-gray-200 text-gray-800 font-medium"
+                    >
+                        Réinitialiser
+                    </button>
+                )}
+            </div>
+
+            {displayedProduits.length === 0 ? (
                 <div className="text-center text-gray-500 mt-8">
                     Aucun produit ne correspond à votre recherche
                 </div>
             ) : (
                 <div className="flex flex-col">
-                    {produitsToDisplay.map((produit) => (
+                    {displayedProduits.map((produit) => (
                         <Produit
                             key={produit.articleId}
                             articleId={produit.articleId}

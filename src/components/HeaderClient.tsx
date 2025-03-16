@@ -7,7 +7,18 @@ import ButtonDeconnexion from '@/components/ButtonDeconnexion';
 import PanierCount from './PanierCount';
 import {RequestCookie} from "next/dist/compiled/@edge-runtime/cookies";
 
-const HeaderClient: React.FC<{ existingSession: RequestCookie | null, style?: string }> = ({ existingSession, style = 'flex row text-[#1E4147] active:underline active:underline-offset-4 focus:underline focus:underline-offset-4 hover:underline hover:underline-offset-4' }) => {
+
+
+const HeaderClient: React.FC<{
+    existingSession: RequestCookie | null,
+    style?: string,
+    clientId: string
+}> = ({
+          existingSession,
+          style = 'flex row text-[#1E4147] active:underline active:underline-offset-4 focus:underline focus:underline-offset-4 hover:underline hover:underline-offset-4',
+          clientId
+      }) => {
+
     return (
         <header className={'flex items-center justify-between p-4'}>
             <Image className={'left-0'} src="/Nsud.png" alt="logo" width={80} height={20} />
@@ -25,7 +36,7 @@ const HeaderClient: React.FC<{ existingSession: RequestCookie | null, style?: st
                     <FiShoppingCart color={'#1E4147'} style={{ marginRight: '0.5rem' }} />
                     Panier <PanierCount />
                 </Link>
-                <Link className={style} href={'/compte'}>
+                <Link className={style} href={`/profil/${clientId}`}>
                     <FaRegUser color={'#1E4147'} style={{ marginRight: '0.5rem' }} />
                     Compte
                 </Link>
