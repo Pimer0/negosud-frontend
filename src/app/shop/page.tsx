@@ -10,6 +10,9 @@ export default function Shop() {
     const [produits, setProduits] = useState<ProduitData[]>([]);
     const [filteredProduits, setFilteredProduits] = useState<ProduitData[]>([]);
     const [searchActive, setSearchActive] = useState(false);
+    const [selectedFamille, setSelectedFamille] = useState<string>('');
+    const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
+    const [sortType, setSortType] = useState<'default' | 'prix'>('default');
 
     useEffect(() => {
         const fetchProduits = async () => {
@@ -19,7 +22,7 @@ export default function Shop() {
 
                 if (data?.data) {
                     setProduits(data.data);
-                    setFilteredProduits(data.data); // Initialiser avec tous les produits
+                    setFilteredProduits(data.data);
                 } else {
                     console.error("Données invalides reçues :", data);
                 }
@@ -30,6 +33,11 @@ export default function Shop() {
 
         fetchProduits();
     }, []);
+
+    useEffect(() => {
+
+        applyFilterAndSort();
+    }, [selectedFamille, sortType, sortOrder]);
 
     const handleImg = (famille: Famille | null) => {
         const familleNom = famille?.nom?.toLowerCase();
@@ -48,30 +56,130 @@ export default function Shop() {
 
     const handleSearch = (query: string) => {
         if (query === '') {
-            // Si la requête est vide, réafficher tous les produits
-            setFilteredProduits(produits);
+
+            applyFilterAndSort();
             setSearchActive(false);
         } else {
-            // Sinon, filtrer les produits selon la requête
-            const filtered = produits.filter((produit) =>
+
+            let filtered = produits.filter((produit) =>
                 produit.libelle.toLowerCase().includes(query.toLowerCase()) ||
                 produit.reference.toLowerCase().includes(query.toLowerCase())
             );
-            setFilteredProduits(filtered);
+
+
+            if (selectedFamille) {
+                filtered = filtered.filter(produit =>
+                    produit.famille?.nom?.toLowerCase() === selectedFamille.toLowerCase()
+                );
+            }
+
+
+            applySort(filtered);
             setSearchActive(true);
         }
     };
 
-    // Détermine les produits à afficher
-    const produitsToDisplay = searchActive ? filteredProduits : produits;
+    const handleFamilleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
+        setSelectedFamille(e.target.value);
+        setSearchActive(true);
+    };
+
+    const applyFilterAndSort = () => {
+        let result = [...produits];
+
+
+        if (selectedFamille) {
+            result = result.filter(produit =>
+                produit.famille?.nom?.toLowerCase() === selectedFamille.toLowerCase()
+            );
+        }
+
+
+        applySort(result);
+    };
+
+    const applySort = (items: ProduitData[]) => {
+        const sorted = [...items];
+
+        if (sortType === 'prix') {
+            sorted.sort((a, b) => {
+                return sortOrder === 'asc'
+                    ? a.prix - b.prix
+                    : b.prix - a.prix;
+            });
+        }
+
+        setFilteredProduits(sorted);
+    };
+
+    const toggleSortOrder = () => {
+        setSortOrder(sortOrder === 'asc' ? 'desc' : 'asc');
+    };
+
+    const resetFilters = () => {
+        setSelectedFamille('');
+        setSortType('default');
+        setSortOrder('asc');
+        setSearchActive(false);
+        setFilteredProduits(produits);
+    };
+
+
+    const produitsToDisplay = searchActive || selectedFamille ? filteredProduits : produits;
 
     return (
-        <div className="grid grid-rows-[auto_auto_auto_1fr] items-center justify-items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
+        <div className="grid grid-rows-[auto_auto_auto_auto_1fr] items-center justify-items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
             <h1 className="text-3xl font-bold mb-2">Boutique</h1>
             <h2 className="text-xl">Cherchez un produit:</h2>
             <SearchBar onSearch={handleSearch}/>
 
-            {searchActive && filteredProduits.length === 0 ? (
+
+            <div className="flex flex-wrap gap-4 w-full justify-center">
+
+                <div className="flex items-center">
+                    <label htmlFor="famille-select" className="mr-2 font-medium">Famille:</label>
+                    <select
+                        id="famille-select"
+                        value={selectedFamille}
+                        onChange={handleFamilleChange}
+                        className="px-3 py-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    >
+                        <option value="">Toutes</option>
+                        <option value="blanc">Blanc</option>
+                        <option value="rouge">Rouge</option>
+                        <option value="rosé">Rosé</option>
+                    </select>
+                </div>
+
+
+                <button
+                    onClick={() => {
+                        if (sortType === 'prix') {
+                            toggleSortOrder();
+                        } else {
+                            setSortType('prix');
+                            setSortOrder('asc');
+                        }
+                    }}
+                    className={`px-4 py-2 rounded font-medium ${
+                        sortType === 'prix' ? 'bg-[#1E4147] text-white' : 'bg-white text-[#1E4147]'
+                    }`}
+                >
+                    Trier par Prix {sortType === 'prix' && (sortOrder === 'asc' ? '↑' : '↓')}
+                </button>
+
+
+                {(sortType !== 'default' || selectedFamille) && (
+                    <button
+                        onClick={resetFilters}
+                        className="px-4 py-2 rounded bg-gray-200 text-gray-800 font-medium"
+                    >
+                        Réinitialiser
+                    </button>
+                )}
+            </div>
+
+            {produitsToDisplay.length === 0 ? (
                 <div className="text-center text-gray-500 mt-8">
                     Aucun produit ne correspond à votre recherche
                 </div>
