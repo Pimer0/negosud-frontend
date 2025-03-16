@@ -39,7 +39,7 @@ export default function GestionUtilisateurs() {
                         <div className="mb-4 font-bold border-b border-gray-400">
                             <h3 className="font-extrabold">Utilisateurs</h3>
                         </div>
-                        {utilisateurs.map((utilisateur: UtilisateurProps, index) => (
+                        {utilisateurs.map((utilisateur: UtilisateurProps, index) => (                         
                             <GestionUtilisateur
                                 key={index}
                                 nom={utilisateur.nom}
@@ -49,7 +49,7 @@ export default function GestionUtilisateurs() {
                                 onDelete={handleDeleteUtilisateur}
                                 id={utilisateur.id}
                                 telephone={""}
-                                roleNom={""}
+                                roleNom={utilisateur.roleNom}
                                 deleted_at={utilisateur.deleted_at} />
                         ))}
                     </div>
