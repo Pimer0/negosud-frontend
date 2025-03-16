@@ -119,14 +119,14 @@ export default function ModificationUtilisateur() {
     // Ne pas afficher le formulaire pendant le chargement
     if (isLoading) {
         return (
-            <EncartForm titre={"Modifiez un utilisateur"}>
+            <EncartForm titre={"Modifier un utilisateur"}>
                 <div>Chargement des données...</div>
             </EncartForm>
         );
     }
 
     return (
-        <EncartForm titre={"Modifiez un utilisateur"}>
+        <EncartForm titre={"Modifier un utilisateur"}>
             <form onSubmit={handleSubmit}>
                 <div className={"flex flex-col"}>
                     <label htmlFor="email">Email</label>
@@ -188,7 +188,7 @@ export default function ModificationUtilisateur() {
                         value={formData.roleId}
                         onChange={handleChange}
                         required
-                        className="p-2 border rounded"
+                        className="p-2 border rounded w-full"
                     >
                         <option value="">Sélectionnez un rôle</option>
                         {roles.map(role => (
@@ -204,23 +204,6 @@ export default function ModificationUtilisateur() {
                         />
                     )}
                 </div>
-                {/* <div className={"flex flex-col"}>
-                    <label htmlFor="role">Rôle</label>
-                    <input
-                        type="text"
-                        name="role"
-                        id="role"
-                        value={formData.role}
-                        onChange={handleChange}
-                        required
-                    />
-                    {errors.errors?.role && (
-                        <InfoBulle
-                            colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
-                            content={errors.errors?.role[0]}
-                        />
-                    )}
-                </div> */}
                 <div className={"flex flex-row justify-center gap-4 mt-8"}>
                     <Bouton
                         text={"Retour"}
