@@ -143,7 +143,7 @@ export default function Basket() {
             <div className="flex flex-col w-full max-w-[1440px] gap-4">
                 {produits.map((produit) => (
                     <div key={produit.articleId} className="flex flex-col bg-white p-4 border rounded-lg items-start h-auto w-full sm:h-[250px] sm:flex-row sm:items-center overflow-hidden">
-                        <Image width={200} height={200} src={"/rouge.png"} alt={"Vin"} className="rounded-lg object-cover w-full sm:w-[150px] sm:h-[200px]" />
+                        <Image width={200} height={200} src={`/${produit.famille?.nom?.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "")}.png`} alt={"Vin"} className="rounded-lg object-cover w-full sm:w-[150px] sm:h-[200px]" />
 
                         {/* descri du Produit */}
                         <div className="flex flex-col items-start justify-between sm:w-full h-full sm:mr-[150px] sm:mt-0 sm:ml-4">

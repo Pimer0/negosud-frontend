@@ -75,64 +75,139 @@ const usePanier = (articleId: number, initialQuantite: number) => {
             console.error("Aucun ID client disponible pour synchroniser le panier.");
             return;
         }
-
+    
         setIsLoading(true);
         setError(null);
-
+    
         try {
-            let response = null;
+            // si commandId est 0, on essaie d'abord de récupérer un panier existant
             if (!commandId) {
+                try {
+                    // on vérifie si un panier existe déjà
+                    const checkResponse = await fetch(`http://localhost:5141/api/Panier/${clientId}`);
+                    const checkData = await checkResponse.json();
+                    
+                    if (checkData.success && checkData.data?.commandeId) {
+                        // si un panier existe on utilise son id
+                        setCommandId(checkData.data.commandeId);
+                        
+                        // mise à jour avec le panier existant
+                        const updateBody = {
+                            commandId: checkData.data.commandeId,
+                            clientId,
+                            articleId,
+                            newQuantite,
+                            ligneCommandeId
+                        };
+                        
+                        const response = await fetch(`http://localhost:5141/api/Panier/update`, {
+                            method: 'PUT',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify(updateBody),
+                        });
+                        
+                        if (!response.ok) {
+                            const errorData = await response.json();
+                            throw new Error(`Erreur lors de la mise à jour du panier: ${errorData.message}`);
+                        }
+                        
+                        const responseData = await response.json();
+                        
+                        // Mettre à jour le panier virtuel
+                        const updatedPanier = responseData.data.ligneCommandes.reduce((acc: { [key: number]: { quantite: number; ligneCommandeId: number } }, ligne: LigneCommande) => {
+                            if (ligne.article) {
+                                acc[ligne.article.articleId] = {
+                                    quantite: ligne.quantite,
+                                    ligneCommandeId: ligne.ligneCommandeId
+                                };
+                            }
+                            return acc;
+                        }, {});
+                        
+                        setPanierVirtuel(updatedPanier);
+                        return;
+                    }
+                    
+                    // aucun panier n'existe, on en crée un nouveau
+                    const createBody = {
+                        clientId,
+                        articleId,
+                        newQuantite,
+                    };
+                    
+                    const createResponse = await fetch(`http://localhost:5141/api/Panier/create`, {
+                        method: 'POST',
+                        headers: { 'Content-Type': 'application/json' },
+                        body: JSON.stringify(createBody),
+                    });
+                    
+                    if (!createResponse.ok) {
+                        const errorData = await createResponse.json();
+                        throw new Error(`Erreur lors de la création du panier: ${errorData.message}`);
+                    }
+                    
+                    const createData = await createResponse.json();
+                    
+                    if (createData.success && createData.data?.commandeId) {
+                        setCommandId(createData.data.commandeId);
+                        
+                        // mise à jour le panier virtuel
+                        const newPanier = createData.data.ligneCommandes.reduce((acc: { [key: number]: { quantite: number; ligneCommandeId: number } }, ligne: LigneCommande) => {
+                            if (ligne.article) {
+                                acc[ligne.article.articleId] = {
+                                    quantite: ligne.quantite,
+                                    ligneCommandeId: ligne.ligneCommandeId
+                                };
+                            }
+                            return acc;
+                        }, {});
+                        
+                        setPanierVirtuel(newPanier);
+                    }
+                } catch (error) {
+                    console.error("Erreur lors de la gestion du panier:", error);
+                    setError(`${error instanceof Error ? error.message : "Erreur inconnue lors de la gestion du panier"}`);
+                    return;
+                }
+            } else {
+                // si commandId existe déjà, on met à jour
                 const requestBody = {
+                    commandId,
                     clientId,
                     articleId,
                     newQuantite,
+                    ligneCommandeId
                 };
-
-                response = await fetch(`http://localhost:5141/api/Panier/create`, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody),
-                });
-
-            } else {
-                const requestBody = {
-                commandId,
-                clientId,
-                articleId,
-                newQuantite,
-                ligneCommandeId
-                };
-
-                response = await fetch(`http://localhost:5141/api/Panier/update`, {
+    
+                const response = await fetch(`http://localhost:5141/api/Panier/update`, {
                     method: 'PUT',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify(requestBody),
                 });
-            }
-
-            if (!response.ok) {
-                const errorData = await response.json();
-                throw new Error(`Erreur lors de la synchronisation du panier: ${errorData.message}`);
-            }
-
-            const responseData = await response.json();
-            if (commandId === 0 && responseData.data?.commandeId) {
-                setCommandId(responseData.data.commandeId);
-            }
-
-            const updatedPanier = responseData.data.ligneCommandes.reduce((acc: { [key: number]: { quantite: number; ligneCommandeId: number } }, ligne: LigneCommande) => {
-                if (ligne.article) {
-                    acc[ligne.article.articleId] = {
-                        quantite: ligne.quantite,
-                        ligneCommandeId: ligne.ligneCommandeId
-                    };
+    
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(`Erreur lors de la synchronisation du panier: ${errorData.message}`);
                 }
-                return acc;
-            }, {});
-            setPanierVirtuel(updatedPanier);
+    
+                const responseData = await response.json();
+                
+                // mise à jour du panier virtuel
+                const updatedPanier = responseData.data.ligneCommandes.reduce((acc: { [key: number]: { quantite: number; ligneCommandeId: number } }, ligne: LigneCommande) => {
+                    if (ligne.article) {
+                        acc[ligne.article.articleId] = {
+                            quantite: ligne.quantite,
+                            ligneCommandeId: ligne.ligneCommandeId
+                        };
+                    }
+                    return acc;
+                }, {});
+                
+                setPanierVirtuel(updatedPanier);
+            }
         } catch (error) {
             console.error("Erreur lors de la synchronisation du panier:", error);
-            setError("Une erreur s'est produite lors de la synchronisation du panier.");
+            setError(`Erreur lors de la synchronisation du panier: ${error instanceof Error ? error.message : "Erreur inconnue"}`);
         } finally {
             setIsLoading(false);
         }
