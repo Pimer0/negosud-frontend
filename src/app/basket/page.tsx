@@ -4,12 +4,15 @@ import GestionCartBasket from "@/components/GestionCartBasket";
 import { ProduitData } from "@/interfaces/ProduitData";
 import { getSession } from "@/lib/session";
 import Image from "next/image";
+import { useRouter } from 'next/navigation';
 
 export default function Basket() {
     const [panier, setPanier] = useState<PanierData>({ ligneCommandes: [], commandeId: 0 });
     const [totalPrice, setTotalPrice] = useState(0);
     const [produits, setProduits] = useState<ProduitData[]>([]);
     const [clientId, setClientId] = useState<number | null>(null);
+
+    const router = useRouter();
 
     useEffect(() => {
         const fetchClientId = async () => {
@@ -104,7 +107,7 @@ export default function Basket() {
 
         const amount = totalPrice * 100; // stripe utilise des centimes...
         const currency = "eur";
-        const successUrl = "http://localhost:3000/success"; // URL de redirection en cas de succès 
+        const successUrl = "http://localhost:3000/command/success"; // URL de redirection en cas de succès 
         const cancelUrl = "http://localhost:3000/basket"; // URL de redirection si paiement annuler
 
         try {
@@ -128,7 +131,7 @@ export default function Basket() {
             }
 
             const data = await response.json();
-            window.location.href = data.url; // redirection l'utilisateur vers la page de paiement Stripe
+            router.push(data.url)// redirection l'utilisateur vers la page de paiement Stripe
         } catch (error) {
             console.error("Erreur lors de la création de la session de paiement:", error);
         }
