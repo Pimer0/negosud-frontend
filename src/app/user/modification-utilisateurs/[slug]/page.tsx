@@ -2,10 +2,12 @@
 
 import InfoBulle from "@/components/infoBulle";
 import Bouton from "@/components/Bouton";
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useParams } from 'next/navigation';
 import EncartForm from "@/components/EncartForm";
 import { ValidationErrorsUtilisateurs} from "@/interfaces/ValidationsErrors";
+import { fetchWithSessionUser } from "@/lib/fetchWithSession";
+import { Role } from "@/interfaces/Role";
 
 
 export default function ModificationUtilisateur() {
@@ -13,6 +15,7 @@ export default function ModificationUtilisateur() {
     const params = useParams();
     const [errors, /*setErrors*/] = useState<ValidationErrorsUtilisateurs>({});
     const [success, setSuccess] = useState(false);
+    const [roles, setRoles] = useState<Role[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [formData, setFormData] = useState({
         utilisateurId: 0,
@@ -56,59 +59,74 @@ export default function ModificationUtilisateur() {
             };
 
             fetchUtilisateur();
+            fetchRoles();
         }
     }, [params.slug]);
 
-    const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fetchRoles = async () => {
+        const response = await fetchWithSessionUser('/api/Role');
+        if (response.success) {
+            setRoles(response.data);
+        } else {
+            console.error("Erreur lors de la récupération des rôles", response.message);
+        }
+    }
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData(prevState => ({
+        
+        if (name === 'roleId') {
+          const roleIdValue = parseInt(value, 10);
+          const selectedRole = roles.find(role => role.roleId === roleIdValue);
+          
+          setFormData(prevState => ({
+            ...prevState,
+            roleId: roleIdValue,
+            role: selectedRole ? selectedRole.nom : '',
+          }));
+        } else {
+          setFormData(prevState => ({
             ...prevState,
             [name]: value,
-        }));
-    };
-
-    const handleSubmit = async (e: React.FormEvent) => {
-        e.preventDefault();
-
-        /*        // Validation des données avec Zod
-                const result = AjoutUtilisateurSchema.safeParse(formData);
-                if (!result.success) {
-                    setErrors({ errors: result.error.flatten().fieldErrors });
-                    return;
-                }*/
-
-        try {
-            const response = await fetch(`http://localhost:5141/api/Utilisateur/${formData.utilisateurId}`, {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(formData),
-            });
-
-            if (response.ok) {
-                setSuccess(true);
-                console.log("Utilisateur modifié avec succès");
-                router.push("/user/gestion-utilisateurs"); // Redirection après succès
-            } else {
-                console.error("Erreur lors de la modification");
-            }
-        } catch (error) {
-            console.error("Erreur lors de la modification", error);
+          }));
         }
-    };
+      };
+
+      const handleSubmit = async (e: React.FormEvent) => {
+        e.preventDefault();
+      
+        try {
+          const response = await fetchWithSessionUser(`/api/Utilisateur/${formData.utilisateurId}`, {
+            method: 'PATCH',
+            headers: {
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify(formData),
+          });
+      
+          if (response.success) {
+            setSuccess(true);
+            console.log("Utilisateur modifié avec succès");
+            router.push("/user/gestion-utilisateurs");
+          } else {
+            console.error("Erreur lors de la modification", response.message);
+          }
+        } catch (error) {
+          console.error("Erreur lors de la modification", error);
+        }
+      };
 
     // Ne pas afficher le formulaire pendant le chargement
     if (isLoading) {
         return (
-            <EncartForm titre={"Modifiez un utilisateur"}>
+            <EncartForm titre={"Modifier un utilisateur"}>
                 <div>Chargement des données...</div>
             </EncartForm>
         );
     }
 
     return (
-        <EncartForm titre={"Modifiez un utilisateur"}>
+        <EncartForm titre={"Modifier un utilisateur"}>
             <form onSubmit={handleSubmit}>
                 <div className={"flex flex-col"}>
                     <label htmlFor="email">Email</label>
@@ -163,36 +181,26 @@ export default function ModificationUtilisateur() {
                     )}
                 </div>
                 <div className={"flex flex-col"}>
-                    <label htmlFor="roleId">ID du rôle</label>
-                    <input
-                        type="number"
+                    <label htmlFor="roleId">Rôle</label>
+                    <select
                         name="roleId"
                         id="roleId"
                         value={formData.roleId}
                         onChange={handleChange}
                         required
-                    />
+                        className="p-2 border rounded w-full"
+                    >
+                        <option value="">Sélectionnez un rôle</option>
+                        {roles.map(role => (
+                            <option key={role.roleId} value={role.roleId}>
+                                {role.nom}
+                            </option>
+                        ))}
+                    </select>
                     {errors.errors?.roleId && (
                         <InfoBulle
                             colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
                             content={errors.errors?.roleId[0]}
-                        />
-                    )}
-                </div>
-                <div className={"flex flex-col"}>
-                    <label htmlFor="role">Rôle</label>
-                    <input
-                        type="text"
-                        name="role"
-                        id="role"
-                        value={formData.role}
-                        onChange={handleChange}
-                        required
-                    />
-                    {errors.errors?.role && (
-                        <InfoBulle
-                            colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
-                            content={errors.errors?.role[0]}
                         />
                     )}
                 </div>

@@ -1,10 +1,11 @@
 export interface UtilisateurProps {
-    id: number,
-    nom: string,
-    prenom: string,
-    email: string,
-    telephone: string,
-    roleId: number,
-    roleNom: string,
-    deleted_at: string
-}
+    id: number;
+    nom: string;
+    prenom: string;
+    email: string;
+    roleId: number;
+    role?: string;
+    roleNom?: string;
+    telephone?: string;
+    deleted_at: string;
+  }
