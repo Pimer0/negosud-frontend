@@ -67,5 +67,5 @@ export async function middleware(request: NextRequest) {
 
 // Appliquer le middleware à certaines routes
 export const config = {
-    matcher: ['/profile', '/shop', '/user/:path*'], // Protéger ces routes
+    matcher: ['/profil', '/shop', '/user/:path*'], // Protéger ces routes
 };
