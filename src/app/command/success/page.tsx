@@ -1,15 +1,11 @@
 'use client';
 
 import React from 'react';
-import { useEffect } from 'react';
 import Encart from '@/components/Encart';
 import Bouton from '@/components/Bouton';
 import { useRouter } from 'next/navigation';
 
 export default function OrderConfirmation() {
-    useEffect(() => {
-        console.log('Page de confirmation chargée');
-    }, []);
     const router = useRouter();
 
     return (
