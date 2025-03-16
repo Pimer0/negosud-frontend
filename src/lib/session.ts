@@ -124,9 +124,14 @@ export async function updateSession() {
 export async function getSession() {
     const cookieStore = await cookies();
     return {
-        token: cookieStore.get('token')?.value,
+        token: cookieStore.get('session')?.value,
         clientId: cookieStore.get('clientId')?.value
     };
+}
+
+export async function getClientId(): Promise<string> {
+    const cookieStore = await cookies();
+    return cookieStore.get('clientId')?.value || '';
 }
 
 export async function deleteSession() {
