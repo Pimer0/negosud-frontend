@@ -8,8 +8,9 @@ import SearchBar from "@/components/SearchBar";
 
 export default function Shop() {
     const [produits, setProduits] = useState<ProduitData[]>([]);
-    const [filteredProduits, setFilteredProduits] = useState<ProduitData[]>([]);
-    const [searchActive, setSearchActive] = useState(false);
+    const [, setFilteredProduits] = useState<ProduitData[]>([]);
+    const [displayedProduits, setDisplayedProduits] = useState<ProduitData[]>([]);
+    const [searchQuery, setSearchQuery] = useState('');
     const [selectedFamille, setSelectedFamille] = useState<string>('');
     const [sortOrder, setSortOrder] = useState<'asc' | 'desc'>('asc');
     const [sortType, setSortType] = useState<'default' | 'prix'>('default');
@@ -23,6 +24,7 @@ export default function Shop() {
                 if (data?.data) {
                     setProduits(data.data);
                     setFilteredProduits(data.data);
+                    setDisplayedProduits(data.data);
                 } else {
                     console.error("Données invalides reçues :", data);
                 }
@@ -36,8 +38,9 @@ export default function Shop() {
 
     useEffect(() => {
 
-        applyFilterAndSort();
-    }, [selectedFamille, sortType, sortOrder]);
+        applyFiltersAndSort();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [selectedFamille, sortType, sortOrder, searchQuery, produits]);
 
     const handleImg = (famille: Famille | null) => {
         const familleNom = famille?.nom?.toLowerCase();
@@ -55,37 +58,23 @@ export default function Shop() {
     };
 
     const handleSearch = (query: string) => {
-        if (query === '') {
-
-            applyFilterAndSort();
-            setSearchActive(false);
-        } else {
-
-            let filtered = produits.filter((produit) =>
-                produit.libelle.toLowerCase().includes(query.toLowerCase()) ||
-                produit.reference.toLowerCase().includes(query.toLowerCase())
-            );
-
-
-            if (selectedFamille) {
-                filtered = filtered.filter(produit =>
-                    produit.famille?.nom?.toLowerCase() === selectedFamille.toLowerCase()
-                );
-            }
-
-
-            applySort(filtered);
-            setSearchActive(true);
-        }
+        setSearchQuery(query);
     };
 
     const handleFamilleChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
         setSelectedFamille(e.target.value);
-        setSearchActive(true);
     };
 
-    const applyFilterAndSort = () => {
+    const applyFiltersAndSort = () => {
+
         let result = [...produits];
+
+        if (searchQuery) {
+            result = result.filter((produit) =>
+                produit.libelle.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                produit.reference.toLowerCase().includes(searchQuery.toLowerCase())
+            );
+        }
 
 
         if (selectedFamille) {
@@ -95,21 +84,17 @@ export default function Shop() {
         }
 
 
-        applySort(result);
-    };
-
-    const applySort = (items: ProduitData[]) => {
-        const sorted = [...items];
-
         if (sortType === 'prix') {
-            sorted.sort((a, b) => {
+            result.sort((a, b) => {
                 return sortOrder === 'asc'
                     ? a.prix - b.prix
                     : b.prix - a.prix;
             });
         }
 
-        setFilteredProduits(sorted);
+
+        setFilteredProduits(result);
+        setDisplayedProduits(result);
     };
 
     const toggleSortOrder = () => {
@@ -120,12 +105,10 @@ export default function Shop() {
         setSelectedFamille('');
         setSortType('default');
         setSortOrder('asc');
-        setSearchActive(false);
+        setSearchQuery('');
         setFilteredProduits(produits);
+        setDisplayedProduits(produits);
     };
-
-
-    const produitsToDisplay = searchActive || selectedFamille ? filteredProduits : produits;
 
     return (
         <div className="grid grid-rows-[auto_auto_auto_auto_1fr] items-center justify-items-center min-h-screen p-8 pb-20 gap-8 sm:p-20 font-[family-name:var(--font-geist-sans)]">
@@ -169,7 +152,7 @@ export default function Shop() {
                 </button>
 
 
-                {(sortType !== 'default' || selectedFamille) && (
+                {(sortType !== 'default' || selectedFamille || searchQuery) && (
                     <button
                         onClick={resetFilters}
                         className="px-4 py-2 rounded bg-gray-200 text-gray-800 font-medium"
@@ -179,13 +162,13 @@ export default function Shop() {
                 )}
             </div>
 
-            {produitsToDisplay.length === 0 ? (
+            {displayedProduits.length === 0 ? (
                 <div className="text-center text-gray-500 mt-8">
                     Aucun produit ne correspond à votre recherche
                 </div>
             ) : (
                 <div className="flex flex-col">
-                    {produitsToDisplay.map((produit) => (
+                    {displayedProduits.map((produit) => (
                         <Produit
                             key={produit.articleId}
                             articleId={produit.articleId}
