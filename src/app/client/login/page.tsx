@@ -95,14 +95,14 @@ export default function Login() {
                     message: 'Aucun compte trouvé avec cet email. Veuillez vous inscrire.'
 
                 });
-                router.push('/user/register')
+                router.push('/client/register')
             }
         } catch (error) {
             setErrors({
                 message: 'Une erreur est survenue lors de la vérification de l\'email.'
             });
             console.error(error);
-            router.push('/user/register')
+            router.push('/client/register')
         }
     };
 
