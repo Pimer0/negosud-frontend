@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { IoIosAdd, IoIosRemove } from "react-icons/io";
 import InfoBulle from "@/components/infoBulle";
 import {GestionStockProps} from "@/interfaces/GestionStockProps";
-import {getSessionUser} from "@/lib/session";
+
 
 const GestionInv: React.FC<GestionStockProps> = ({
                                                      stockId,
@@ -12,13 +12,14 @@ const GestionInv: React.FC<GestionStockProps> = ({
                                                      seuilMinimum,
                                                      reapprovisionnementAuto,
                                                      onQuantityChange,
+userId
                                                  }) => {
     const [quantite, setQuantite] = useState<number>(quantiteActuelle);
     const [isLoading, setIsLoading] = useState<boolean>(false);
     const [error, setError] = useState<string | null>(null);
-    const [userId, setUserId] = useState<string | undefined>(undefined);
+   /* const [userId, setUserId] = useState<string | undefined>(undefined);*/
 
-    // Utiliser useEffect pour récupérer l'ID de l'utilisateur au chargement du composant
+/*    // Utiliser useEffect pour récupérer l'ID de l'utilisateur au chargement du composant
     useEffect(() => {
         const fetchUserId = async () => {
             try {
@@ -31,7 +32,7 @@ const GestionInv: React.FC<GestionStockProps> = ({
         };
 
         fetchUserId();
-    }, []);
+    }, []);*/
 
     const getStockStatusClass = () => {
         if (quantite <= seuilMinimum) return "bg-[#FECACA] text-[#450A0A] border-[#450A0A]";

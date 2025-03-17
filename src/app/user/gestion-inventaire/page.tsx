@@ -6,18 +6,22 @@ import React, {useEffect, useState} from "react";
 import {useRouter} from "next/navigation";
 import InfoBulle from "@/components/infoBulle";
 import {StockData} from "@/interfaces/GestionStockProps";
+import {getSessionUser} from "@/lib/session";
 
 
 export default function GestionInventaire() {
     const [stocks, setStocks] = useState<StockData[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
+    const [userId, setUserId] = useState<string | undefined>(undefined);
 
     const router = useRouter();
 
     useEffect(() => {
         const fetchStocks = async () => {
             setLoading(true);
+            const session = await getSessionUser();
+            setUserId(session.UserId);
             try {
                 const response = await fetch('http://localhost:5141/api/Stocks');
                 const data = await response.json();
@@ -78,6 +82,7 @@ export default function GestionInventaire() {
                                     quantiteActuelle={stock.quantite}
                                     seuilMinimum={stock.seuilMinimum}
                                     reapprovisionnementAuto={stock.reapprovisionnementAuto}
+                                    userId={userId}
                                     onQuantityChange={handleQuantityChange}
                                 />
                             ))}
