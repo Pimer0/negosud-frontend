@@ -1,13 +1,16 @@
 'use client';
 import EncartForm from "@/components/EncartForm";
 import Bouton from "@/components/Bouton";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import InfoBulle from "@/components/infoBulle";
 import { useRouter } from "next/navigation";
 import { ValidationErrorsUtilisateurs} from "@/interfaces/ValidationsErrors";
+import { fetchWithSessionUser } from "@/lib/fetchWithSession";
+import { Role } from "@/interfaces/Role";
 
 export default function AjoutUtilisateur() {
   const router = useRouter();
+  const [roles, setRoles] = useState<Role[]>([]);
   const [formData, setFormData] = useState({
     email: "",
     motDePasse: "",
@@ -21,13 +24,37 @@ export default function AjoutUtilisateur() {
   const [errors, setErrors] = useState<ValidationErrorsUtilisateurs>({});
   const [success, setSuccess] = useState<boolean>(false);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  useEffect(() => {
+    fetchRoles();
+  }) 
+
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData(prevState => ({
-      ...prevState,
-      [name]: value,
-    }));
+      if (name === 'roleId') {
+        const roleIdValue = parseInt(value, 10);
+        const selectedRole = roles.find(role => role.roleId === roleIdValue);
+        
+        setFormData(prevState => ({
+        ...prevState,
+        roleId: roleIdValue,
+        role: selectedRole ? selectedRole.nom : '',
+        }));
+    } else {
+        setFormData(prevState => ({
+        ...prevState,
+        [name]: value,
+        }));
+    }
   };
+
+    const fetchRoles = async () => {
+        const response = await fetchWithSessionUser('/api/Role');
+        if (response.success) {
+            setRoles(response.data);
+        } else {
+            console.error("Erreur lors de la récupération des rôles", response.message);
+        }
+    };
 
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
     event.preventDefault();
@@ -141,6 +168,31 @@ export default function AjoutUtilisateur() {
                   />
               )}
             </div>
+
+            <div className={"flex flex-col"}>
+                    <label htmlFor="roleId">Rôle</label>
+                    <select
+                        name="roleId"
+                        id="roleId"
+                        value={formData.roleId}
+                        onChange={handleChange}
+                        required
+                        className="p-2 border rounded w-full"
+                    >
+                        <option value="">Sélectionnez un rôle</option>
+                        {roles.map(role => (
+                            <option key={role.roleId} value={role.roleId}>
+                                {role.nom}
+                            </option>
+                        ))}
+                    </select>
+                    {errors.errors?.roleId && (
+                        <InfoBulle
+                            colorClass={"bg-[#FECACA] text-[#450A0A] border-[#450A0A]"}
+                            content={errors.errors?.roleId[0]}
+                        />
+                    )}
+                </div>
             <div className={"flex flex-row justify-center gap-4 mt-8"}>
               <Bouton
                   text={"Retour"}

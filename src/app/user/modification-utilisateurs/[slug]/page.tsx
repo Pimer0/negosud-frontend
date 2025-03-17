@@ -75,48 +75,47 @@ export default function ModificationUtilisateur() {
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
         
-        if (name === 'roleId') {
-          const roleIdValue = parseInt(value, 10);
-          const selectedRole = roles.find(role => role.roleId === roleIdValue);
-          
-          setFormData(prevState => ({
-            ...prevState,
-            roleId: roleIdValue,
-            role: selectedRole ? selectedRole.nom : '',
-          }));
-        } else {
-          setFormData(prevState => ({
-            ...prevState,
-            [name]: value,
-          }));
-        }
-      };
+            if (name === 'roleId') {
+                const roleIdValue = parseInt(value, 10);
+                const selectedRole = roles.find(role => role.roleId === roleIdValue);
+                
+                setFormData(prevState => ({
+                ...prevState,
+                roleId: roleIdValue,
+                role: selectedRole ? selectedRole.nom : '',
+                }));
+            } else {
+                setFormData(prevState => ({
+                ...prevState,
+                [name]: value,
+                }));
+            }
+        };
 
-      const handleSubmit = async (e: React.FormEvent) => {
+        const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-      
+        
         try {
-          const response = await fetchWithSessionUser(`/api/Utilisateur/${formData.utilisateurId}`, {
+            const response = await fetchWithSessionUser(`/api/Utilisateur/${formData.utilisateurId}`, {
             method: 'PATCH',
             headers: {
-              'Content-Type': 'application/json',
+                'Content-Type': 'application/json',
             },
             body: JSON.stringify(formData),
-          });
-      
-          if (response.success) {
+            });
+        
+            if (response.success) {
             setSuccess(true);
             console.log("Utilisateur modifié avec succès");
             router.push("/user/gestion-utilisateurs");
-          } else {
+            } else {
             console.error("Erreur lors de la modification", response.message);
-          }
+            }
         } catch (error) {
-          console.error("Erreur lors de la modification", error);
+            console.error("Erreur lors de la modification", error);
         }
-      };
+        };
 
-    // Ne pas afficher le formulaire pendant le chargement
     if (isLoading) {
         return (
             <EncartForm titre={"Modifier un utilisateur"}>
