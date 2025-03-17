@@ -5,12 +5,14 @@ import React, {useEffect, useState} from "react";
 import EncartForm from "@/components/EncartForm";
 import InfoBulle from "@/components/infoBulle";
 import Bouton from "@/components/Bouton";
+import { fetchWithSession } from "@/lib/fetchWithSession";
 
 // Define types for the data structure
 type Commande = {
     commandeId: number;
     dateCreation: string;
     expirationDate: string;
+    status: string;
     valide: boolean;
     factureId?: number | null;
     clientId: number;
@@ -78,8 +80,7 @@ export default function ProfilClient() {
                     return;
                 }
 
-                const response = await fetch(`http://localhost:5141/api/Client/${clientId}`);
-                const result = await response.json();
+                const result = await fetchWithSession(`/api/Client/${clientId}`);
 
                 if (result.data) {
                     const data = {
@@ -89,6 +90,7 @@ export default function ProfilClient() {
                         email: result.data.email,
                         tel: result.data.tel,
                         estValide: result.data.estValide,
+                        status: result.data.status,
                         adresses: result.data.adresses || [],
                         commandes: result.data.commandes || [],
                         factures: result.data.factures || []
@@ -125,32 +127,9 @@ export default function ProfilClient() {
     };
 
 
-    const calculateTimeRemaining = (expirationDate: string): string => {
-        const now = new Date();
-        const expDate = new Date(expirationDate);
-
-        if (isNaN(expDate.getTime())) {
-            return "Date d'expiration invalide";
-        }
-
-        if (now > expDate) {
-            return "Expirée";
-        }
-
-        const diffMs = expDate.getTime() - now.getTime();
-        const diffMins = Math.floor(diffMs / 60000);
-        const diffHours = Math.floor(diffMins / 60);
-
-        if (diffHours > 0) {
-            return `${diffHours}h ${diffMins % 60}min`;
-        }
-        return `${diffMins}min`;
-    };
-
-
     const getCommandeStatus = (commande: Commande) => {
         if (commande.valide) {
-            return {status: "Validée", color: "text-green-600"};
+            return {status: "Payée", color: "text-green-600"};
         } else if (!commande.valide) {
             const now = new Date();
             const expDate = new Date(commande.expirationDate);
@@ -225,12 +204,10 @@ export default function ProfilClient() {
                                                     <p className="text-gray-600">Date de création:</p>
                                                     <p>{formatDate(commande.dateCreation)}</p>
                                                 </div>
-                                                {!commande.valide && (
                                                     <div>
-                                                        <p className="text-gray-600">Expire dans:</p>
-                                                        <p>{calculateTimeRemaining(commande.expirationDate)}</p>
+                                                        <p className="text-gray-600">Status:</p>
+                                                        <p>{commande.status}</p>
                                                     </div>
-                                                )}
                                             </div>
                                         </div>
                                     );
