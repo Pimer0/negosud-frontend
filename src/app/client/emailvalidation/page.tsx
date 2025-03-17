@@ -38,7 +38,7 @@ export default function EmailValidation() {
             setSuccess(true);
             // Rediriger l'utilisateur après une validation réussie
             setTimeout(() => {
-                router.push('/login');
+                router.push('/');
             }, 2000); // Redirection après 2 secondes
 } catch (err) {
     const error = err as { response?: { data?: { message?: string; errors?: { code?: string[] } } } };
