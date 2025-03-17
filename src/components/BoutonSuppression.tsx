@@ -12,7 +12,7 @@ const BoutonSuppression = ({ entityId, entityType, onDelete }: BoutonSuppression
                 endpoint = `http://localhost:5141/api/Stocks/${entityId}`;
                 break;
             case "fournisseur":
-                endpoint = `http://localhost:5141/api/Fournisseurs/${entityId}`;
+                endpoint = `http://localhost:5141/api/Fournisseur/${entityId}`;
                 break;
             case "utilisateur":
                 endpoint = `http://localhost:5141/api/Utilisateur/${entityId}`;
