@@ -1,5 +1,8 @@
 import { useState, useEffect, useCallback } from "react";
 import { getSession } from "@/lib/session";
+import { fetchWithSession } from "@/lib/fetchWithSession";
+import { createPanier } from "@/app/basket/create";
+import { updatePanier } from "@/app/basket/update";
 
 const usePanier = (articleId: number, initialQuantite: number) => {
     const [quantite, setQuantite] = useState(initialQuantite);
@@ -28,11 +31,11 @@ const usePanier = (articleId: number, initialQuantite: number) => {
 
     const fetchExistingPanier = async (clientId: number) => {
         try {
-            const response = await fetch(`http://localhost:5141/api/Panier/${clientId}`);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.data?.commandeId) {
-                    const existingPanier = data.data.ligneCommandes.reduce((acc: { [key: number]: { quantite: number; ligneCommandeId: number } }, ligne: LigneCommande) => {
+            const response = await fetchWithSession(`/api/Panier/${clientId}`);
+            
+            if (response) {
+                if (response.data?.commandeId) {
+                    const existingPanier = response.data.ligneCommandes.reduce((acc: { [key: number]: { quantite: number; ligneCommandeId: number } }, ligne: LigneCommande) => {
                         acc[ligne.article.articleId] = {
                             quantite: ligne.quantite,
                             ligneCommandeId: ligne.ligneCommandeId
@@ -40,7 +43,7 @@ const usePanier = (articleId: number, initialQuantite: number) => {
                         return acc;
                     }, {});
                     setPanierVirtuel(existingPanier);
-                    setCommandId(data.data.commandeId);
+                    setCommandId(response.data.commandeId);
                 } else {
                     setPanierVirtuel({});
                     setCommandId(0);
@@ -84,8 +87,8 @@ const usePanier = (articleId: number, initialQuantite: number) => {
             if (!commandId) {
                 try {
                     // on vérifie si un panier existe déjà
-                    const checkResponse = await fetch(`http://localhost:5141/api/Panier/${clientId}`);
-                    const checkData = await checkResponse.json();
+                    const checkResponse = await fetchWithSession(`/api/Panier/${clientId}`);
+                    const checkData = await checkResponse;
                     
                     if (checkData.success && checkData.data?.commandeId) {
                         // si un panier existe on utilise son id
@@ -128,25 +131,20 @@ const usePanier = (articleId: number, initialQuantite: number) => {
                         return;
                     }
                     
-                    // aucun panier n'existe, on en crée un nouveau
-                    const createBody = {
+                    const payload = {
                         clientId,
                         articleId,
                         newQuantite,
                     };
-                    
-                    const createResponse = await fetch(`http://localhost:5141/api/Panier/create`, {
-                        method: 'POST',
-                        headers: { 'Content-Type': 'application/json' },
-                        body: JSON.stringify(createBody),
-                    });
+
+                    const createResponse = await createPanier(payload);
                     
                     if (!createResponse.ok) {
-                        const errorData = await createResponse.json();
+                        const errorData = createResponse;
                         throw new Error(`Erreur lors de la création du panier: ${errorData.message}`);
                     }
                     
-                    const createData = await createResponse.json();
+                    const createData = createResponse;
                     
                     if (createData.success && createData.data?.commandeId) {
                         setCommandId(createData.data.commandeId);
@@ -171,7 +169,7 @@ const usePanier = (articleId: number, initialQuantite: number) => {
                 }
             } else {
                 // si commandId existe déjà, on met à jour
-                const requestBody = {
+                const payload = {
                     commandId,
                     clientId,
                     articleId,
@@ -179,18 +177,7 @@ const usePanier = (articleId: number, initialQuantite: number) => {
                     ligneCommandeId
                 };
     
-                const response = await fetch(`http://localhost:5141/api/Panier/update`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(requestBody),
-                });
-    
-                if (!response.ok) {
-                    const errorData = await response.json();
-                    throw new Error(`Erreur lors de la synchronisation du panier: ${errorData.message}`);
-                }
-    
-                const responseData = await response.json();
+                const responseData = await updatePanier(payload)
                 
                 // mise à jour du panier virtuel
                 const updatedPanier = responseData.data.ligneCommandes.reduce((acc: { [key: number]: { quantite: number; ligneCommandeId: number } }, ligne: LigneCommande) => {

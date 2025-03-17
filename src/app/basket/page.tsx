@@ -5,6 +5,7 @@ import { ProduitData } from "@/interfaces/ProduitData";
 import { getSession } from "@/lib/session";
 import Image from "next/image";
 import { useRouter } from 'next/navigation';
+import { fetchWithSession } from '@/lib/fetchWithSession';
 
 export default function Basket() {
     const [panier, setPanier] = useState<PanierData>({ ligneCommandes: [], commandeId: 0 });
@@ -25,8 +26,7 @@ export default function Basket() {
 
         const fetchProduits = async () => {
             try {
-                const response = await fetch(`http://localhost:5141/api/Panier/${clientId}`);
-                const data = await response.json();
+                const data = await fetchWithSession(`/api/Panier/${clientId}`);
 
                 if (data?.data) {
                     setPanier(data.data);
@@ -111,6 +111,7 @@ export default function Basket() {
         const cancelUrl = "http://localhost:3000/basket"; // URL de redirection si paiement annuler
 
         try {
+            
             const response = await fetch("http://localhost:5141/api/Stripe/create-checkout-session", {
                 method: "POST",
                 headers: {
