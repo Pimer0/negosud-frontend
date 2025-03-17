@@ -6,6 +6,7 @@ export interface GestionStockProps {
     seuilMinimum: number;
     reapprovisionnementAuto: boolean;
     onQuantityChange: (stockId: number, newQuantite: number) => void;
+    userId: string | undefined;
 }
 
 export interface StockData {
@@ -16,4 +17,5 @@ export interface StockData {
     refLot: string;
     seuilMinimum: number;
     reapprovisionnementAuto: boolean;
+
 }
